@@ -98,12 +98,12 @@ namespace TwoDoubleThree {
     
     public static class Test {
         public static void Main() {
-            BulletDisp.Fire("こんにちは世界 おおおおおおおおはよう", Color.White, 20, 100);
-            BulletDisp.Fire("Hello World!", Color.Black, 20, 170);
-            BulletDisp.Fire("(~~=u=)~~", Color.Lime, 20, 240);
-            BulletDisp.Fire("Hello World!", Color.Gray, 20, 310);
-            BulletDisp starter = new BulletDisp();
-            Application.Run(starter);
+            DanmakuPool pool = new DanmakuPool();
+            pool.Fire(BulletType.TOP_SLIDING, "こんにちは世界 おおおおおおおおはよう", Color.White);
+            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Black);
+            pool.Fire(BulletType.TOP_SLIDING, "(~~=u=)~~", Color.Lime);
+            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Gray);
+            Application.Run(pool);
         }
     }
 }
