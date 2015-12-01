@@ -27,9 +27,10 @@ namespace TwoDoubleThree {
         }
     }
     
-    public class BulletDisp : Form {
+    public class BulletDisp : Control {
         public static String FontName = "华文黑体";
         protected CustomLabel label;
+        public static Color WhiteReplacement = Color.FromArgb(254, 254, 254);
         
         public BulletDisp() {
             this.InitializeComponent();
@@ -42,9 +43,8 @@ namespace TwoDoubleThree {
             label.AutoSize = true;
             label.OutlineForeColor = Color.Black;
             this.Controls.Add(label);
-            
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.StartPosition = FormStartPosition.Manual;
+
+            this.BackColor = Color.White;
             this.TextColor = Color.White;
             this.FontSize = 44;
             this.OutlineWidth = 2;
@@ -54,14 +54,9 @@ namespace TwoDoubleThree {
         public Color TextColor {
             get { return label.ForeColor; }
             set {
+                if (value == Color.White)
+                    value = WhiteReplacement;
                 label.ForeColor = value;
-                if (value == Color.Gray) {
-                    this.BackColor = Color.White;
-                    this.TransparencyKey = Color.White;
-                } else {
-                    this.BackColor = Color.Gray;
-                    this.TransparencyKey = Color.Gray;
-                }
             }
         }
         
@@ -91,7 +86,7 @@ namespace TwoDoubleThree {
             ret.Text = text;
             ret.TextColor = color;
             ret.Location = new Point(x, y);
-            ret.Show();
+            ret.Hide();
             return ret;
         }
     }
