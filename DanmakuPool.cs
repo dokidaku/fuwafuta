@@ -29,7 +29,7 @@ namespace TwoDoubleThree {
 
         private void InitializeComponent() {
             this.timer = new Timer();
-            timer.Interval = 10;
+            timer.Interval = 40;
             timer.Enabled = true;
             timer.Tick += Timer_Tick;
             timer.Start();
@@ -38,8 +38,7 @@ namespace TwoDoubleThree {
             this.Size = SystemInformation.WorkingArea.Size;
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(0, 0);
-            this.BackColor = Color.White;
-            this.TransparencyKey = Color.White;
+            this.BackColor = this.TransparencyKey = BulletDisp.BackgroundColor;
         }
 
         private void Timer_Tick(object sender, EventArgs e) {

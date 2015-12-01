@@ -30,7 +30,8 @@ namespace TwoDoubleThree {
     public class BulletDisp : Control {
         public static String FontName = "华文黑体";
         protected CustomLabel label;
-        public static Color WhiteReplacement = Color.FromArgb(254, 254, 254);
+        public static Color BackgroundColor = Color.FromArgb(128, 128, 128);
+        public static Color BackgroundReplacement = Color.FromArgb(126, 126, 126);
         
         public BulletDisp() {
             this.InitializeComponent();
@@ -44,7 +45,7 @@ namespace TwoDoubleThree {
             label.OutlineForeColor = Color.Black;
             this.Controls.Add(label);
 
-            this.BackColor = Color.White;
+            this.BackColor = BackgroundColor;
             this.TextColor = Color.White;
             this.FontSize = 44;
             this.OutlineWidth = 2;
@@ -54,8 +55,12 @@ namespace TwoDoubleThree {
         public Color TextColor {
             get { return label.ForeColor; }
             set {
-                if (value == Color.White)
-                    value = WhiteReplacement;
+                if (Math.Abs(value.R - BackgroundColor.R) < 2
+                    && Math.Abs(value.G - BackgroundColor.G) < 2
+                    && Math.Abs(value.B - BackgroundColor.B) < 2)
+                {
+                    value = BackgroundReplacement;
+                }
                 label.ForeColor = value;
             }
         }
@@ -95,9 +100,11 @@ namespace TwoDoubleThree {
         public static void Main() {
             DanmakuPool pool = new DanmakuPool();
             pool.Fire(BulletType.TOP_SLIDING, "こんにちは世界 おおおおおおおおはよう", Color.White);
-            pool.Fire(BulletType.TOP_SLIDING, " Hello World!", Color.Black);
+            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Black);
             pool.Fire(BulletType.TOP_SLIDING, "(~~=u=)~~", Color.Lime);
             pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Gray);
+            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Yellow);
+            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Red);
             Application.Run(pool);
         }
     }
