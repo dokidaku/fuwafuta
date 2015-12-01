@@ -100,7 +100,7 @@ namespace TwoDoubleThree {
         public static void Main() {
             DanmakuPool pool = new DanmakuPool();
             pool.Fire(BulletType.TOP_SLIDING, "こんにちは世界 おおおおおおおおはよう", Color.White);
-            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Black);
+            pool.Fire(BulletType.TOP_SLIDING, " Hello World!", Color.Black);
             pool.Fire(BulletType.TOP_SLIDING, "(~~=u=)~~", Color.Lime);
             pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Gray);
             Application.Run(pool);
