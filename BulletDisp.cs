@@ -48,7 +48,7 @@ namespace TwoDoubleThree {
             this.TextColor = Color.White;
             this.FontSize = 44;
             this.OutlineWidth = 2;
-            this.Text = "23333333";
+            this.Text = "";
         }
         
         public Color TextColor {
@@ -85,29 +85,25 @@ namespace TwoDoubleThree {
             get { return label.OutlineWidth; }
             set { label.OutlineWidth = value; }
         }
+
+        public static BulletDisp Fire(String text, Color color, int x, int y) {
+            BulletDisp ret = new BulletDisp();
+            ret.Text = text;
+            ret.TextColor = color;
+            ret.Location = new Point(x, y);
+            ret.Show();
+            return ret;
+        }
     }
     
     public static class Test {
         public static void Main() {
-            BulletDisp bullet = new BulletDisp();
-            bullet.Text = "こんにちは世界 おおおおおおおおはよう";
-            bullet.Location = new Point(20, 100);
-            BulletDisp bullet_2 = new BulletDisp();
-            bullet_2.Text = "Hello World!";
-            bullet_2.TextColor = Color.Black;
-            bullet_2.Location = new Point(20, 170);
-            bullet_2.Show();
-            BulletDisp bullet_3 = new BulletDisp();
-            bullet_3.Text = "(~~=u=)~~";
-            bullet_3.TextColor = Color.Lime;
-            bullet_3.Location = new Point(20, 240);
-            bullet_3.Show();
-            BulletDisp bullet_4 = new BulletDisp();
-            bullet_4.Text = "Hello World!";
-            bullet_4.TextColor = Color.Gray;
-            bullet_4.Location = new Point(20, 310);
-            bullet_4.Show();
-            Application.Run(bullet);
+            BulletDisp.Fire("こんにちは世界 おおおおおおおおはよう", Color.White, 20, 100);
+            BulletDisp.Fire("Hello World!", Color.Black, 20, 170);
+            BulletDisp.Fire("(~~=u=)~~", Color.Lime, 20, 240);
+            BulletDisp.Fire("Hello World!", Color.Gray, 20, 310);
+            BulletDisp starter = new BulletDisp();
+            Application.Run(starter);
         }
     }
 }
