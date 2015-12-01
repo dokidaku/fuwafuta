@@ -21,6 +21,13 @@ namespace TwoDoubleThree {
         protected Timer timer;
         SortedList bullets;
         private static int lastID = 0;
+        protected Random random = new Random();
+
+        public const int XOffset = 20;
+        public const int YOffset = 20;
+        public const int LineHeight = 64;
+        public const double SlidingMinDuration = 5;
+        public const double SlidingMaxDuration = 9;
 
         public DanmakuPool() {
             this.InitializeComponent();
@@ -60,18 +67,23 @@ namespace TwoDoubleThree {
             }
         }
 
+        private double randomBetween(double l, double h) {
+            return random.NextDouble() * (h - l) + l;
+        }
+
         public void Fire(BulletType type, String text, Color color) {
             BulletInfo bif = new BulletInfo();
-            int x = 20, y = 50 + lastID * 70;
+            int x = XOffset, y = YOffset + lastID * LineHeight;
+            double w = SystemInformation.WorkingArea.Size.Width;
             double xStartPos = SystemInformation.WorkingArea.Size.Width;
-            double xSpeed = -200.0;
+            double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
             bif.bullet = BulletDisp.Fire(text, color, x, y);
             this.Controls.Add(bif.bullet);
             bif.bullet.Show();
             bif.type = type;
             bif.id = ++lastID;
             bif.startTime = DateTime.Now.Ticks;
-            bif.finishTime = DateTime.Now.AddSeconds(lastID + 5).Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
             bif.xStartPos = xStartPos;
             bif.xSpeed = xSpeed;
             bullets.Add(bif.id, bif);
