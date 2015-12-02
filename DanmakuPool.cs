@@ -91,13 +91,40 @@ namespace TwoDoubleThree {
         protected override void AllocateSpace(ref BulletInfo bif) {
             double y = YOffset + LineHeight * (bif.id - 1);
             double w = SystemInformation.WorkingArea.Size.Width;
-            double xStartPos = SystemInformation.WorkingArea.Size.Width;
             double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
-            bif.xStartPos = xStartPos;
+            bif.xStartPos = w;
             bif.xSpeed = xSpeed;
             bif.bullet.Location = new Point((int)w, (int)y);
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
+        }
+    }
+
+    public class TopStickDanmakuPool : DanmakuPool {
+        public const double StickDuration = 6;
+
+        protected override void AllocateSpace(ref BulletInfo bif) {
+            double y = YOffset + LineHeight * (bif.id - 1);
+            double w = SystemInformation.WorkingArea.Size.Width;
+            bif.xStartPos = (w - bif.bullet.Width) / 2;
+            bif.xSpeed = 0;
+            bif.bullet.Location = new Point((int)w, (int)y);
+            bif.startTime = DateTime.Now.Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
+        }
+    }
+
+    public class BottomStickDanmakuPool : DanmakuPool {
+        public const double StickDuration = 6;
+
+        protected override void AllocateSpace(ref BulletInfo bif) {
+            double y = SystemInformation.WorkingArea.Size.Height - (YOffset + LineHeight * (bif.id - 1));
+            double w = SystemInformation.WorkingArea.Size.Width;
+            bif.xStartPos = (w - bif.bullet.Width) / 2;
+            bif.xSpeed = 0;
+            bif.bullet.Location = new Point((int)w, (int)y);
+            bif.startTime = DateTime.Now.Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
         }
     }
 }
