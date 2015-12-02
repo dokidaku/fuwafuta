@@ -105,24 +105,24 @@ namespace TwoDoubleThree {
         public const double SlidingMinDuration = 5;
         public const double SlidingMaxDuration = 9;
         protected const int MaxRows = 1024;
-        protected long[] nextAvailTime = new long[MaxRows];
+        protected long[] nextUnblockTime = new long[MaxRows];
         protected long[] nextEmptyTime = new long[MaxRows];
 
         public TopSlideDanmakuPool() {
             for (int i = 0; i < MaxRows; ++i) {
-                nextAvailTime[i] = 0;
+                nextUnblockTime[i] = 0;
                 nextEmptyTime[i] = 0;
             }
         }
 
         protected int GetAvailableRow(long blockTime, long borderTouchTime, long disappearTime) {
-            Console.WriteLine("ADD " + (new DateTime(borderTouchTime)).ToLongTimeString() + " " + (new DateTime(disappearTime)).ToLongTimeString());
+            // Console.WriteLine("ADD " + (new DateTime(borderTouchTime)).ToLongTimeString() + " " + (new DateTime(disappearTime)).ToLongTimeString());
             long now = DateTime.Now.Ticks;
             int i = 0;
             for (; i < MaxRows; ++i) {
-                if (nextAvailTime[i] <= now && nextEmptyTime[i] <= borderTouchTime) {
-                    Console.WriteLine("FOUND ROW #" + i);
-                    nextAvailTime[i] = blockTime;
+                if (nextUnblockTime[i] <= now && nextEmptyTime[i] <= borderTouchTime) {
+                    // Console.WriteLine("FOUND ROW #" + i);
+                    nextUnblockTime[i] = blockTime;
                     nextEmptyTime[i] = disappearTime;
                     return i;
                 }
@@ -147,30 +147,44 @@ namespace TwoDoubleThree {
 
     public class TopStickDanmakuPool : DanmakuPool {
         public const double StickDuration = 6;
+        protected const int MaxRows = 1024;
+        protected long[] nextEmptyTime = new long[MaxRows];
+
+        public TopStickDanmakuPool() {
+            for (int i = 0; i < MaxRows; ++i) {
+                nextEmptyTime[i] = 0;
+            }
+        }
+
+        protected int GetAvailableRow(long disappearTime) {
+            long now = DateTime.Now.Ticks;
+            for (int i = 0; i < MaxRows; ++i) {
+                if (nextEmptyTime[i] <= now) {
+                    nextEmptyTime[i] = disappearTime;
+                    // Console.WriteLine(i);
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         protected override void AllocateSpace(ref BulletInfo bif) {
             double w = SystemInformation.WorkingArea.Size.Width;
-            double y = YOffset + LineHeight * (bif.id - 1);
             bif.xStartPos = (w - bif.bullet.Width) / 2;
             bif.xSpeed = 0;
-            bif.bullet.Location = new Point((int)w, (int)y);
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
+            double y = YOffset + LineHeight * GetAvailableRow(bif.finishTime);
+            bif.bullet.Location = new Point((int)w, (int)y);
         }
     }
 
-    public class BottomStickDanmakuPool : DanmakuPool {
-        public const double StickDuration = 6;
-
+    public class BottomStickDanmakuPool : TopStickDanmakuPool {
         protected override void AllocateSpace(ref BulletInfo bif) {
-            double w = SystemInformation.WorkingArea.Size.Width;
+            base.AllocateSpace(ref bif);
             double h = SystemInformation.WorkingArea.Size.Height;
-            double y = h - (YOffset + LineHeight * (bif.id - 1));
-            bif.xStartPos = (w - bif.bullet.Width) / 2;
-            bif.xSpeed = 0;
-            bif.bullet.Location = new Point((int)w, (int)y);
-            bif.startTime = DateTime.Now.Ticks;
-            bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
+            bif.bullet.Location =
+                new Point(bif.bullet.Location.X, (int)(h - LineHeight + YOffset - bif.bullet.Location.Y));
         }
     }
 }
