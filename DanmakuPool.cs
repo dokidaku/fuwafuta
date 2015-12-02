@@ -15,15 +15,13 @@ namespace TwoDoubleThree {
 
     public class DanmakuPool : Form {
         protected Timer timer;
-        SortedList bullets;
+        protected SortedList bullets;
         private static int lastID = 0;
         protected Random random = new Random();
 
         public const int XOffset = 20;
         public const int YOffset = 20;
         public const int LineHeight = 64;
-        public const double SlidingMinDuration = 5;
-        public const double SlidingMaxDuration = 9;
 
         public DanmakuPool() {
             this.InitializeComponent();
@@ -63,20 +61,17 @@ namespace TwoDoubleThree {
             }
         }
 
-        private double randomBetween(double l, double h) {
+        protected double randomBetween(double l, double h) {
             return random.NextDouble() * (h - l) + l;
         }
 
-        protected void AllocateSpace(ref BulletInfo bif) {
-            double y = YOffset + LineHeight * bif.id;
-            double w = SystemInformation.WorkingArea.Size.Width;
-            double xStartPos = SystemInformation.WorkingArea.Size.Width;
-            double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
-            bif.xStartPos = xStartPos;
-            bif.xSpeed = xSpeed;
-            bif.bullet.Location = new Point((int)w, (int)y);
+        protected virtual void AllocateSpace(ref BulletInfo bif) {
+            Console.WriteLine("WARNING: This DanmakuPool base class should not be used; use TopSlideDanmakuPool etc. instead.");
+            bif.xStartPos = 0;
+            bif.xSpeed = 0;
+            bif.bullet.Location = new Point(0, 0);
             bif.startTime = DateTime.Now.Ticks;
-            bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds(5).Ticks;
         }
         public void Fire(String text, Color color) {
             BulletInfo bif = new BulletInfo();
@@ -86,6 +81,23 @@ namespace TwoDoubleThree {
             this.Controls.Add(bif.bullet);
             bif.bullet.Show();
             bullets.Add(bif.id, bif);
+        }
+    }
+
+    public class TopSlideDanmakuPool : DanmakuPool {
+        public const double SlidingMinDuration = 5;
+        public const double SlidingMaxDuration = 9;
+
+        protected override void AllocateSpace(ref BulletInfo bif) {
+            double y = YOffset + LineHeight * (bif.id - 1);
+            double w = SystemInformation.WorkingArea.Size.Width;
+            double xStartPos = SystemInformation.WorkingArea.Size.Width;
+            double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
+            bif.xStartPos = xStartPos;
+            bif.xSpeed = xSpeed;
+            bif.bullet.Location = new Point((int)w, (int)y);
+            bif.startTime = DateTime.Now.Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
         }
     }
 }

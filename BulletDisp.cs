@@ -98,7 +98,7 @@ namespace TwoDoubleThree {
     
     public static class Test {
         public static void Main() {
-            DanmakuPool pool = new DanmakuPool();
+            DanmakuPool pool = new TopSlideDanmakuPool();
             pool.Fire("こんにちは世界 おおおおおおおおはよう", Color.White);
             pool.Fire("Hello World!", Color.Black);
             pool.Fire("(~~=u=)~~", Color.Lime);
