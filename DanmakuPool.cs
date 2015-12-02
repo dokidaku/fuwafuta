@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -77,26 +78,70 @@ namespace TwoDoubleThree {
             BulletInfo bif = new BulletInfo();
             bif.id = ++lastID;
             bif.bullet = BulletDisp.Fire(text, color, 0, 0);
-            this.AllocateSpace(ref bif);
             this.Controls.Add(bif.bullet);
+            this.AllocateSpace(ref bif);
             bif.bullet.Show();
             bullets.Add(bif.id, bif);
+        }
+        public void Fire(double delay, String text, Color color) {
+            if (delay <= 0) {
+                this.Fire(text, color);
+            } else {
+                Timer t = new Timer();
+                t.Interval = (int)(delay * 1000);
+                t.Tag = new KeyValuePair<String, Color>(text, color);
+                t.Tick += DelayTimer_Tick;
+                t.Start();
+            }
+        }
+        private void DelayTimer_Tick(object sender, EventArgs e) {
+            KeyValuePair<String, Color> args = (KeyValuePair<String, Color>)((Timer)sender).Tag;
+            this.Fire(args.Key, args.Value);
+            ((Timer)sender).Dispose();
         }
     }
 
     public class TopSlideDanmakuPool : DanmakuPool {
         public const double SlidingMinDuration = 5;
         public const double SlidingMaxDuration = 9;
+        protected const int MaxRows = 1024;
+        protected long[] nextAvailTime = new long[MaxRows];
+        protected long[] nextEmptyTime = new long[MaxRows];
+
+        public TopSlideDanmakuPool() {
+            for (int i = 0; i < MaxRows; ++i) {
+                nextAvailTime[i] = 0;
+                nextEmptyTime[i] = 0;
+            }
+        }
+
+        protected int GetAvailableRow(long blockTime, long borderTouchTime, long disappearTime) {
+            Console.WriteLine("ADD " + (new DateTime(borderTouchTime)).ToLongTimeString() + " " + (new DateTime(disappearTime)).ToLongTimeString());
+            long now = DateTime.Now.Ticks;
+            int i = 0;
+            for (; i < MaxRows; ++i) {
+                if (nextAvailTime[i] <= now && nextEmptyTime[i] <= borderTouchTime) {
+                    Console.WriteLine("FOUND ROW #" + i);
+                    nextAvailTime[i] = blockTime;
+                    nextEmptyTime[i] = disappearTime;
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         protected override void AllocateSpace(ref BulletInfo bif) {
-            double y = YOffset + LineHeight * (bif.id - 1);
             double w = SystemInformation.WorkingArea.Size.Width;
             double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
             bif.xStartPos = w;
             bif.xSpeed = xSpeed;
-            bif.bullet.Location = new Point((int)w, (int)y);
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
+            long blockUntil = DateTime.Now.AddSeconds(bif.bullet.Width / -xSpeed).Ticks;
+            long borderTouchTime = DateTime.Now.AddSeconds(w / -xSpeed).Ticks;
+            Console.WriteLine(bif.bullet.Text);
+            double y = YOffset + LineHeight * GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime);
+            bif.bullet.Location = new Point((int)w, (int)y);
         }
     }
 
@@ -104,8 +149,8 @@ namespace TwoDoubleThree {
         public const double StickDuration = 6;
 
         protected override void AllocateSpace(ref BulletInfo bif) {
-            double y = YOffset + LineHeight * (bif.id - 1);
             double w = SystemInformation.WorkingArea.Size.Width;
+            double y = YOffset + LineHeight * (bif.id - 1);
             bif.xStartPos = (w - bif.bullet.Width) / 2;
             bif.xSpeed = 0;
             bif.bullet.Location = new Point((int)w, (int)y);
@@ -118,8 +163,9 @@ namespace TwoDoubleThree {
         public const double StickDuration = 6;
 
         protected override void AllocateSpace(ref BulletInfo bif) {
-            double y = SystemInformation.WorkingArea.Size.Height - (YOffset + LineHeight * (bif.id - 1));
             double w = SystemInformation.WorkingArea.Size.Width;
+            double h = SystemInformation.WorkingArea.Size.Height;
+            double y = h - (YOffset + LineHeight * (bif.id - 1));
             bif.xStartPos = (w - bif.bullet.Width) / 2;
             bif.xSpeed = 0;
             bif.bullet.Location = new Point((int)w, (int)y);
