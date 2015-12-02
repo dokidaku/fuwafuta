@@ -5,12 +5,8 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace TwoDoubleThree {
-    public enum BulletType {
-        TOP_SLIDING, TOP_STICKY, BOTTOM_STICKY
-    }
     public class BulletInfo {
         public BulletDisp bullet;
-        public BulletType type;
         public int id;
         public long startTime, finishTime;
         public double xStartPos;
@@ -71,21 +67,24 @@ namespace TwoDoubleThree {
             return random.NextDouble() * (h - l) + l;
         }
 
-        public void Fire(BulletType type, String text, Color color) {
-            BulletInfo bif = new BulletInfo();
-            int x = XOffset, y = YOffset + lastID * LineHeight;
+        protected void AllocateSpace(ref BulletInfo bif) {
+            double y = YOffset + LineHeight * bif.id;
             double w = SystemInformation.WorkingArea.Size.Width;
             double xStartPos = SystemInformation.WorkingArea.Size.Width;
             double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
-            bif.bullet = BulletDisp.Fire(text, color, x, y);
-            this.Controls.Add(bif.bullet);
-            bif.bullet.Show();
-            bif.type = type;
-            bif.id = ++lastID;
-            bif.startTime = DateTime.Now.Ticks;
-            bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
             bif.xStartPos = xStartPos;
             bif.xSpeed = xSpeed;
+            bif.bullet.Location = new Point((int)w, (int)y);
+            bif.startTime = DateTime.Now.Ticks;
+            bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
+        }
+        public void Fire(String text, Color color) {
+            BulletInfo bif = new BulletInfo();
+            bif.id = ++lastID;
+            bif.bullet = BulletDisp.Fire(text, color, 0, 0);
+            this.AllocateSpace(ref bif);
+            this.Controls.Add(bif.bullet);
+            bif.bullet.Show();
             bullets.Add(bif.id, bif);
         }
     }

@@ -99,12 +99,12 @@ namespace TwoDoubleThree {
     public static class Test {
         public static void Main() {
             DanmakuPool pool = new DanmakuPool();
-            pool.Fire(BulletType.TOP_SLIDING, "こんにちは世界 おおおおおおおおはよう", Color.White);
-            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Black);
-            pool.Fire(BulletType.TOP_SLIDING, "(~~=u=)~~", Color.Lime);
-            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Gray);
-            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Yellow);
-            pool.Fire(BulletType.TOP_SLIDING, "Hello World!", Color.Red);
+            pool.Fire("こんにちは世界 おおおおおおおおはよう", Color.White);
+            pool.Fire("Hello World!", Color.Black);
+            pool.Fire("(~~=u=)~~", Color.Lime);
+            pool.Fire("Hello World!", Color.Gray);
+            pool.Fire("Hello World!", Color.Yellow);
+            pool.Fire("Hello World!", Color.Red);
             Application.Run(pool);
         }
     }
