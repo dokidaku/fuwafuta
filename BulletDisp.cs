@@ -26,18 +26,18 @@ namespace TwoDoubleThree {
             e.Graphics.FillPath(foreBrush, gp);
         }
     }
-    
+
     public class BulletDisp : Control {
         public static String FontName = "华文黑体";
         protected CustomLabel label;
         public static Color BackgroundColor = Color.FromArgb(128, 128, 128);
         public static Color BackgroundReplacement = Color.FromArgb(126, 126, 126);
-        
+
         public BulletDisp() {
             this.InitializeComponent();
             this.DoubleBuffered = true;
         }
-        
+
         private void InitializeComponent() {
             label = new CustomLabel();
             label.Location = new Point(0, 0);
@@ -51,7 +51,7 @@ namespace TwoDoubleThree {
             this.OutlineWidth = 2;
             this.Text = "";
         }
-        
+
         public Color TextColor {
             get { return label.ForeColor; }
             set {
@@ -64,7 +64,7 @@ namespace TwoDoubleThree {
                 label.ForeColor = value;
             }
         }
-        
+
         public new String Text {
             get { return label.Text; }
             set {
@@ -72,7 +72,7 @@ namespace TwoDoubleThree {
                 this.Size = label.Size;
             }
         }
-        
+
         public Single FontSize {
             get { return label.Font.Size; }
             set {
@@ -80,7 +80,7 @@ namespace TwoDoubleThree {
                 this.Size = label.Size;
             }
         }
-        
+
         public float OutlineWidth {
             get { return label.OutlineWidth; }
             set { label.OutlineWidth = value; }

@@ -81,7 +81,7 @@ namespace TwoDoubleThree {
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.Resize += (object sender, EventArgs e) => ((TestForm)sender).refreshDisp();
             this.refreshDisp();
-            this.txtComment.Focus();
+            this.Load += (object sender, EventArgs e) => this.txtComment.Focus();
             this.AcceptButton = this.btnSubmit;
 
             this.pool = new DanmakuPool();
@@ -96,6 +96,7 @@ namespace TwoDoubleThree {
             Color c = Color.FromArgb(r, g, b);
             this.lblColourDisp.BackColor = c;
             this.txtComment.ForeColor = c;
+            // TODO: Replace these with more precise parameters.
             if (r * 0.3 + g * 0.65 + b * 0.05 <= 128) {
                 this.txtComment.BackColor = Color.White;
             } else {

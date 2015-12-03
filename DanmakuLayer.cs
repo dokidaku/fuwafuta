@@ -147,7 +147,6 @@ namespace TwoDoubleThree {
             bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
             long blockUntil = DateTime.Now.AddSeconds(bif.bullet.Width / -xSpeed).Ticks;
             long borderTouchTime = DateTime.Now.AddSeconds(w / -xSpeed).Ticks;
-            Console.WriteLine(bif.bullet.Text);
             int row = GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime);
             if (row == -1) return false;
             double y = YOffset + LineHeight * row;
@@ -174,7 +173,6 @@ namespace TwoDoubleThree {
             for (int i = 0; i < MaxRows; ++i) {
                 if (nextEmptyTime[i] <= now) {
                     nextEmptyTime[i] = disappearTime;
-                    // Console.WriteLine(i);
                     return i;
                 }
             }
