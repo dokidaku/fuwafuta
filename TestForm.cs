@@ -14,8 +14,13 @@ namespace TwoDoubleThree {
         private Label lblColourDisp;
         private NumericUpDown[] updColour = new NumericUpDown[3];
 
+        private DanmakuPool pool;
+
+        private Random r;
+
         public TestForm() {
             this.InitializeComponent();
+            this.r = new Random();
         }
 
         private void refreshDisp() {
@@ -35,6 +40,7 @@ namespace TwoDoubleThree {
             this.btnSubmit.Font = new Font(BulletDisp.FontName, 20);
             this.btnSubmit.Text = "Go!";
             this.Controls.Add(this.btnSubmit);
+            this.btnSubmit.Click += btnSubmit_Click;
             this.btnSubmit.TabIndex = 666;
 
             for (int i = 0; i < 3; ++i) {
@@ -69,14 +75,16 @@ namespace TwoDoubleThree {
             this.lblColourDisp.Location = new Point(6, this.updColour[0].Location.Y);
             this.lblColourDisp.BackColor = Color.Black;
             this.Controls.Add(this.lblColourDisp);
+            this.lblColourDisp.Click += lblColourDisp_Click;
 
             this.Size = new Size(500, 300);
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.Resize += (object sender, EventArgs e) => ((TestForm)sender).refreshDisp();
             this.refreshDisp();
             this.txtComment.Focus();
+            this.AcceptButton = this.btnSubmit;
 
-            DanmakuPool pool = new DanmakuPool();
+            this.pool = new DanmakuPool();
             pool.RepresentativeForm().ShowInTaskbar = false;
         }
 
@@ -93,6 +101,23 @@ namespace TwoDoubleThree {
             } else {
                 this.txtComment.BackColor = Color.Black;
             }
+        }
+
+        private void btnSubmit_Click(object sender, EventArgs e) {
+            int typeIdx;
+            for (typeIdx = 0; typeIdx < 3; ++typeIdx)
+                if (this.optCommentType[typeIdx].Checked) break;
+            int r, g, b;
+            r = (int)this.updColour[0].Value;
+            g = (int)this.updColour[1].Value;
+            b = (int)this.updColour[2].Value;
+            Color c = Color.FromArgb(r, g, b);
+            this.pool.Fire((BulletType)typeIdx, this.txtComment.Text, c);
+        }
+
+        private void lblColourDisp_Click(object sender, EventArgs e) {
+            for (int i = 0; i < 3; ++i)
+                this.updColour[i].Value = r.Next() % 256;
         }
     }
 
