@@ -98,24 +98,24 @@ namespace TwoDoubleThree {
     
     public static class Test {
         public static void Main() {
-			DanmakuPool pool = new DanmakuPool();
-			pool.Fire(BulletType.TOP_SLIDING, 0, "こんにちは世界 おおおおおおおおはよう", Color.White);
-			pool.Fire(BulletType.TOP_SLIDING, 0, "Hello World 1!", Color.Black);
-			pool.Fire(BulletType.TOP_SLIDING, 1, "(~~=u=)~~", Color.Lime);
-			pool.Fire(BulletType.TOP_SLIDING, 3, "Hello World 2!", Color.Gray);
-			pool.Fire(BulletType.TOP_SLIDING, 2, "Hello World 3!", Color.Yellow);
-			pool.Fire(BulletType.TOP_SLIDING, 7, "Hello World 4!", Color.Red);
-			pool.Fire(BulletType.TOP_SLIDING, 5, "にゃんぱすー", Color.Magenta);
-			Random r = new Random();
+            DanmakuPool pool = new DanmakuPool();
+            pool.Fire(BulletType.TOP_SLIDING, 0, "こんにちは世界 おおおおおおおおはよう", Color.White);
+            pool.Fire(BulletType.TOP_SLIDING, 0, "Hello World 1!", Color.Black);
+            pool.Fire(BulletType.TOP_SLIDING, 1, "(~~=u=)~~", Color.Lime);
+            pool.Fire(BulletType.TOP_SLIDING, 3, "Hello World 2!", Color.Gray);
+            pool.Fire(BulletType.TOP_SLIDING, 2, "Hello World 3!", Color.Yellow);
+            pool.Fire(BulletType.TOP_SLIDING, 7, "Hello World 4!", Color.Red);
+            pool.Fire(BulletType.TOP_SLIDING, 5, "にゃんぱすー", Color.Magenta);
+            Random r = new Random();
             for (int i = 0; i < 30; ++i) {
-				int nowTicks = (int)(DateTime.Now.Ticks % int.MaxValue);
-				pool.Fire(BulletType.TOP_SLIDING, i * 0.12 + 0.12, "+++++++++++++++++xxxx+++++++++++++", Color.PowderBlue);
-				pool.Fire(BulletType.TOP_SLIDING, 6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
-				pool.Fire(BulletType.BOTTOM_STICKY, 2.6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Magenta);
-				pool.Fire(BulletType.TOP_STICKY, i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
+                int nowTicks = (int)(DateTime.Now.Ticks % int.MaxValue);
+                pool.Fire(BulletType.TOP_SLIDING, i * 0.12 + 0.12, "+++++++++++++++++xxxx+++++++++++++", Color.PowderBlue);
+                pool.Fire(BulletType.TOP_SLIDING, 6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
+                pool.Fire(BulletType.BOTTOM_STICKY, 2.6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Magenta);
+                pool.Fire(BulletType.TOP_STICKY, i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
                 pool.Fire(BulletType.BOTTOM_STICKY, i * 0.3, "NANNNNN" + r.Next() + "Zzz", Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
             }
-			Application.Run(pool.RepresentativeForm());
+            Application.Run(pool.RepresentativeForm());
         }
     }
 }

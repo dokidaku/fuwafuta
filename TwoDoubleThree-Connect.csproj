@@ -33,6 +33,7 @@
   <ItemGroup>
     <Compile Include="BulletDisp.cs" />
     <Compile Include="DanmakuPool.cs" />
+    <Compile Include="DanmakuLayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
