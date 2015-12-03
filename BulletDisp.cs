@@ -106,13 +106,14 @@ namespace TwoDoubleThree {
 			pool.Fire(BulletType.TOP_SLIDING, 2, "Hello World 3!", Color.Yellow);
 			pool.Fire(BulletType.TOP_SLIDING, 7, "Hello World 4!", Color.Red);
 			pool.Fire(BulletType.TOP_SLIDING, 5, "にゃんぱすー", Color.Magenta);
-            for (int i = 0; i < 10; ++i) {
+			Random r = new Random();
+            for (int i = 0; i < 30; ++i) {
 				int nowTicks = (int)(DateTime.Now.Ticks % int.MaxValue);
 				pool.Fire(BulletType.TOP_SLIDING, i * 0.12 + 0.12, "+++++++++++++++++xxxx+++++++++++++", Color.PowderBlue);
-				pool.Fire(BulletType.TOP_SLIDING, 6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Yellow);
+				pool.Fire(BulletType.TOP_SLIDING, 6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
 				pool.Fire(BulletType.BOTTOM_STICKY, 2.6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Magenta);
-				pool.Fire(BulletType.TOP_STICKY, i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb((nowTicks + i * 233 + i * i * 999 + 6666) % 255, (nowTicks + i * 178888) % 255, nowTicks % 255));
-				pool.Fire(BulletType.BOTTOM_STICKY, i * 0.3, "NNNNN", Color.FromArgb(((nowTicks % 233) * (nowTicks % 266) + i * 888) % 255, (nowTicks + 998244 * i * i + 7) % 255, (nowTicks / 2 + 9944 * i * i + 7) % 255));
+				pool.Fire(BulletType.TOP_STICKY, i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
+                pool.Fire(BulletType.BOTTOM_STICKY, i * 0.3, "NANNNNN" + r.Next() + "Zzz", Color.FromArgb(r.Next() % 256, r.Next() % 256, r.Next() % 256));
             }
 			Application.Run(pool.RepresentativeForm());
         }

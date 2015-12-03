@@ -29,6 +29,13 @@ namespace TwoDoubleThree {
 				bottomStickLayers[i].Show();
 			}
 			topSlideLayers[0].ShowInTaskbar = true;
+			topSlideLayers[0].Activated += (object sender, EventArgs e) => {
+				for (int i = 0; i < MaxLayers; ++i) {
+                    if (i != 0) topSlideLayers[i].Activate();
+                    topStickLayers[i].Activate();
+                    bottomStickLayers[i].Activate();
+				}
+			};
 		}
 
 		public Form RepresentativeForm() {
