@@ -34,10 +34,12 @@
     <Compile Include="BulletDisp.cs" />
     <Compile Include="DanmakuPool.cs" />
     <Compile Include="DanmakuLayer.cs" />
+    <Compile Include="TestForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ namespace TwoDoubleThree {
     }
 
     public class DanmakuPool {
-        public const int MaxLayers = 10;
+        public const int MaxLayers = 3;
 
         protected TopSlideDanmakuLayer[] topSlideLayers;
         protected TopStickDanmakuLayer[] topStickLayers;
