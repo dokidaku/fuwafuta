@@ -22,7 +22,7 @@ namespace TwoDoubleThree {
 
         public const int XOffset = 20;
         public const int YOffset = 20;
-        public const int LineHeight = 64;
+        public const int LineHeight = 60;
 
         public DanmakuPool() {
             this.InitializeComponent();
@@ -41,6 +41,7 @@ namespace TwoDoubleThree {
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(0, 0);
             this.BackColor = this.TransparencyKey = BulletDisp.BackgroundColor;
+            this.ShowInTaskbar = false;
         }
 
         private void Timer_Tick(object sender, EventArgs e) {
