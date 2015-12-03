@@ -98,29 +98,23 @@ namespace TwoDoubleThree {
     
     public static class Test {
         public static void Main() {
-            DanmakuPool[] pool = new DanmakuPool[3];
-            pool[0] = new TopSlideDanmakuPool();
-            pool[1] = new TopStickDanmakuPool();
-            pool[2] = new BottomStickDanmakuPool();
-            pool[0].Fire(0, "こんにちは世界 おおおおおおおおはよう", Color.White);
-            pool[0].Fire(0, "Hello World 1!", Color.Black);
-            pool[0].Fire(1, "(~~=u=)~~", Color.Lime);
-            pool[0].Fire(3, "Hello World 2!", Color.Gray);
-            pool[0].Fire(2, "Hello World 3!", Color.Yellow);
-            pool[0].Fire(7, "Hello World 4!", Color.Red);
-            pool[0].Fire(5, "にゃんぱすー", Color.Magenta);
+			DanmakuPool pool = new DanmakuPool();
+			pool.Fire(BulletType.TOP_SLIDING, 0, "こんにちは世界 おおおおおおおおはよう", Color.White);
+			pool.Fire(BulletType.TOP_SLIDING, 0, "Hello World 1!", Color.Black);
+			pool.Fire(BulletType.TOP_SLIDING, 1, "(~~=u=)~~", Color.Lime);
+			pool.Fire(BulletType.TOP_SLIDING, 3, "Hello World 2!", Color.Gray);
+			pool.Fire(BulletType.TOP_SLIDING, 2, "Hello World 3!", Color.Yellow);
+			pool.Fire(BulletType.TOP_SLIDING, 7, "Hello World 4!", Color.Red);
+			pool.Fire(BulletType.TOP_SLIDING, 5, "にゃんぱすー", Color.Magenta);
             for (int i = 0; i < 10; ++i) {
 				int nowTicks = (int)(DateTime.Now.Ticks % int.MaxValue);
-				pool[0].Fire(i * 0.12 + 0.12, "+++++++++++++++++xxxx+++++++++++++", Color.PowderBlue);
-				pool[0].Fire(6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Yellow);
-				pool[2].Fire(2.6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Magenta);
-				pool[1].Fire(i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb((nowTicks + i * 233 + i * i * 999 + 6666) % 255, (nowTicks + i * 178888) % 255, nowTicks % 255));
-				pool[2].Fire(i * 0.3, "NNNNN", Color.FromArgb(((nowTicks % 233) * (nowTicks % 266) + i * 888) % 255, (nowTicks + 998244 * i * i + 7) % 255, (nowTicks / 2 + 9944 * i * i + 7) % 255));
+				pool.Fire(BulletType.TOP_SLIDING, i * 0.12 + 0.12, "+++++++++++++++++xxxx+++++++++++++", Color.PowderBlue);
+				pool.Fire(BulletType.TOP_SLIDING, 6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Yellow);
+				pool.Fire(BulletType.BOTTOM_STICKY, 2.6 + i * 0.1, "++++++++++++++++++++++++++++++", Color.Magenta);
+				pool.Fire(BulletType.TOP_STICKY, i * 0.26, "aaaa " + DateTime.Now.AddSeconds(i * 0.3).Ticks, Color.FromArgb((nowTicks + i * 233 + i * i * 999 + 6666) % 255, (nowTicks + i * 178888) % 255, nowTicks % 255));
+				pool.Fire(BulletType.BOTTOM_STICKY, i * 0.3, "NNNNN", Color.FromArgb(((nowTicks % 233) * (nowTicks % 266) + i * 888) % 255, (nowTicks + 998244 * i * i + 7) % 255, (nowTicks / 2 + 9944 * i * i + 7) % 255));
             }
-            pool[1].Show();
-            pool[2].Show();
-            pool[0].ShowInTaskbar = true;
-            Application.Run(pool[0]);
+			Application.Run(pool.RepresentativeForm());
         }
     }
 }

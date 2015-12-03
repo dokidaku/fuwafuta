@@ -67,22 +67,28 @@ namespace TwoDoubleThree {
             return random.NextDouble() * (h - l) + l;
         }
 
-        protected virtual void AllocateSpace(ref BulletInfo bif) {
+        protected virtual bool AllocateSpace(ref BulletInfo bif) {
             Console.WriteLine("WARNING: This DanmakuLayer base class should not be used; use TopSlideDanmakuLayer etc. instead.");
             bif.xStartPos = 0;
             bif.xSpeed = 0;
             bif.bullet.Location = new Point(0, 0);
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds(5).Ticks;
+			return true;
         }
-        public void Fire(String text, Color color) {
+        public bool Fire(String text, Color color) {
             BulletInfo bif = new BulletInfo();
             bif.id = ++lastID;
             bif.bullet = BulletDisp.Fire(text, color, 0, 0);
             this.Controls.Add(bif.bullet);
-            this.AllocateSpace(ref bif);
+			if (!this.AllocateSpace(ref bif)) {
+				this.Controls.Remove(bif.bullet);
+				bif.bullet.Dispose();
+				return false;
+			}
             bif.bullet.Show();
             bullets.Add(bif.id, bif);
+			return true;
         }
         public void Fire(double delay, String text, Color color) {
             if (delay <= 0) {
@@ -105,11 +111,14 @@ namespace TwoDoubleThree {
     public class TopSlideDanmakuLayer : DanmakuLayer {
         public const double SlidingMinDuration = 5;
         public const double SlidingMaxDuration = 9;
-        protected const int MaxRows = 1024;
-        protected long[] nextUnblockTime = new long[MaxRows];
-        protected long[] nextEmptyTime = new long[MaxRows];
+		protected int MaxRows;
+        protected long[] nextUnblockTime;
+        protected long[] nextEmptyTime;
 
         public TopSlideDanmakuLayer() {
+			this.MaxRows = SystemInformation.WorkingArea.Size.Height / LineHeight;
+			this.nextUnblockTime = new long[MaxRows];
+			this.nextEmptyTime = new long[MaxRows];
             for (int i = 0; i < MaxRows; ++i) {
                 nextUnblockTime[i] = 0;
                 nextEmptyTime[i] = 0;
@@ -129,7 +138,7 @@ namespace TwoDoubleThree {
             return -1;
         }
 
-        protected override void AllocateSpace(ref BulletInfo bif) {
+		protected override bool AllocateSpace(ref BulletInfo bif) {
             double w = SystemInformation.WorkingArea.Size.Width;
             double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
             bif.xStartPos = w;
@@ -139,17 +148,22 @@ namespace TwoDoubleThree {
             long blockUntil = DateTime.Now.AddSeconds(bif.bullet.Width / -xSpeed).Ticks;
             long borderTouchTime = DateTime.Now.AddSeconds(w / -xSpeed).Ticks;
             Console.WriteLine(bif.bullet.Text);
-            double y = YOffset + LineHeight * GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime);
+			int row = GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime);
+			if (row == -1) return false;
+            double y = YOffset + LineHeight * row;
             bif.bullet.Location = new Point((int)w, (int)y);
+			return true;
         }
     }
 
     public class TopStickDanmakuLayer : DanmakuLayer {
         public const double StickDuration = 6;
-        protected const int MaxRows = 1024;
-        protected long[] nextEmptyTime = new long[MaxRows];
+		public int MaxRows;
+        protected long[] nextEmptyTime;
 
-        public TopStickDanmakuLayer() {
+		public TopStickDanmakuLayer() {
+			this.MaxRows = SystemInformation.WorkingArea.Size.Height / LineHeight;
+			this.nextEmptyTime = new long[MaxRows];
             for (int i = 0; i < MaxRows; ++i) {
                 nextEmptyTime[i] = 0;
             }
@@ -167,23 +181,27 @@ namespace TwoDoubleThree {
             return -1;
         }
 
-        protected override void AllocateSpace(ref BulletInfo bif) {
+        protected override bool AllocateSpace(ref BulletInfo bif) {
             double w = SystemInformation.WorkingArea.Size.Width;
             bif.xStartPos = (w - bif.bullet.Width) / 2;
             bif.xSpeed = 0;
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
-            double y = YOffset + LineHeight * GetAvailableRow(bif.finishTime);
+			int row = GetAvailableRow(bif.finishTime);
+			if (row == -1) return false;
+			double y = YOffset + LineHeight * row;
             bif.bullet.Location = new Point((int)w, (int)y);
+			return true;
         }
     }
 
     public class BottomStickDanmakuLayer : TopStickDanmakuLayer {
-        protected override void AllocateSpace(ref BulletInfo bif) {
-            base.AllocateSpace(ref bif);
+        protected override bool AllocateSpace(ref BulletInfo bif) {
+			if (!base.AllocateSpace(ref bif)) return false;
             double h = SystemInformation.WorkingArea.Size.Height;
             bif.bullet.Location =
-                new Point(bif.bullet.Location.X, (int)(h - LineHeight + YOffset - bif.bullet.Location.Y));
+				new Point(bif.bullet.Location.X, (int)(h - LineHeight + YOffset - bif.bullet.Location.Y));
+			return true;
         }
     }
 }
