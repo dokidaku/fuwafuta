@@ -19,11 +19,26 @@ namespace TwoDoubleThree {
         private Bitmap drawnImage;
         public void InitializeImage() {
             if (this.IsDrawingMode) {
-                drawnImage = new Bitmap(DrawWidth, DrawHeight, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                drawnImage = new Bitmap(
+                    DrawWidth + (int)(OutlineWidth * 2), DrawHeight + (int)(OutlineWidth * 2)
+                );
+                for (int i = 0; i < DrawWidth + (int)(OutlineWidth * 2); ++i)
+                    for (int j = 0; j < DrawHeight + (int)(OutlineWidth * 2); ++j)
+                        drawnImage.SetPixel(i, j, BackColor);
                 for (int i = 0; i < DrawWidth; ++i)
                     for (int j = 0; j < DrawHeight; ++j)
-                        if (Pixels[i, j] == 1) drawnImage.SetPixel(i, j, ForeColor);
-                        else drawnImage.SetPixel(i, j, BackColor);
+                        if (Pixels[i, j] == 1) {
+                            for (int ii = -(int)OutlineWidth; ii <= (int)OutlineWidth; ++ii) {
+                                int t = (int)Math.Round(Math.Sqrt(OutlineWidth * OutlineWidth - ii * ii));
+                                for (int jj = -t; jj <= t; ++jj)
+                                    drawnImage.SetPixel(i + ii + (int)OutlineWidth, j + jj + (int)OutlineWidth, OutlineForeColor);
+                            }
+                        }
+                for (int i = 0; i < DrawWidth; ++i)
+                    for (int j = 0; j < DrawHeight; ++j)
+                        if (Pixels[i, j] == 1)
+                            drawnImage.SetPixel(i + (int)OutlineWidth, j + (int)OutlineWidth, ForeColor);
+                this.Size = new Size(DrawWidth + (int)(OutlineWidth * 2), DrawHeight + (int)(OutlineWidth * 2));
             }
         }
         protected override void OnPaint(PaintEventArgs e) {
@@ -114,13 +129,15 @@ namespace TwoDoubleThree {
                         for (int i = 2; i < n.Length; ++i) for (int j = 0; j < n[i]; ++j) {
                             label.Pixels[y, x] = (byte)(i % 2);
                             if (++y == n[0]) { y = 0; ++x; }
-                        }
+                            }
+                        label.AutoSize = false;
                         label.InitializeImage();
                         label.Text = value; // ... Or the optimization applied will disable OnPaint()
-                        this.Size = new Size(n[0], n[1]);
+                        this.Size = label.Size;
                     }
                 } else {
                     label.IsDrawingMode = false;
+                    label.AutoSize = true;
                     label.Text = value.Replace(' ', '　');
                     this.Size = label.Size;
                 }
