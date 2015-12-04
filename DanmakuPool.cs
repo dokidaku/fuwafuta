@@ -42,6 +42,21 @@ namespace TwoDoubleThree {
             return topSlideLayers[0];
         }
 
+        public void Show() {
+            for (int i = 0; i < MaxLayers; ++i) {
+                topSlideLayers[i].Show();
+                topStickLayers[i].Show();
+                bottomStickLayers[i].Show();
+            }
+        }
+        public void Hide() {
+            for (int i = 0; i < MaxLayers; ++i) {
+                topSlideLayers[i].Hide();
+                topStickLayers[i].Hide();
+                bottomStickLayers[i].Hide();
+            }
+        }
+
         public bool Fire(BulletType btype, string text, Color color) {
             int i;
             switch (btype) {

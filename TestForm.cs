@@ -19,13 +19,23 @@ namespace TwoDoubleThree {
         private static string ModeDrawDesc = "&#";
         private DanmakuPool pool;
         private Random r;
+        public int PenRadius { get; set; }  // Weight?
 
-        private bool isDrawing;
+        private bool isDrawingMode;
+        private bool isMouseDown;
+        // NOTE: Jagged arrays might be used to enable dynamic resizing http://stackoverflow.com/q/12567329/
+        private Bitmap drawnBitmap;
 
         public TestForm() {
             this.InitializeComponent();
             this.r = new Random();
-            this.isDrawing = false;
+            this.isDrawingMode = false;
+            this.isMouseDown = false;
+            this.PenRadius = 3;
+            int w = SystemInformation.WorkingArea.Width, h = this.picDraw.Size.Height;
+            this.drawnBitmap = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            for (int i = 0; i < w; ++i)
+                for (int j = 0; j < h; ++j) this.drawnBitmap.SetPixel(i, j, picDraw.BackColor);
         }
 
         private void refreshDisp() {
@@ -49,6 +59,9 @@ namespace TwoDoubleThree {
             this.picDraw.BorderStyle = BorderStyle.FixedSingle;
             this.picDraw.Visible = false;
             this.Controls.Add(this.picDraw);
+            this.picDraw.MouseDown += picDraw_MouseDown;
+            this.picDraw.MouseMove += picDraw_MouseMove;
+            this.picDraw.MouseUp += picDraw_MouseUp;
 
             this.btnSwitchMode = new Button();
             this.btnSwitchMode.Font = new Font(BulletDisp.FontName, 14);
@@ -108,11 +121,14 @@ namespace TwoDoubleThree {
 
             this.pool = new DanmakuPool();
             pool.RepresentativeForm().ShowInTaskbar = false;
+            #if DEBUG
+            pool.Hide();
+            #endif
         }
 
         private void btnSwitchMode_Click(object sender, EventArgs e) {
-            this.isDrawing = !this.isDrawing;
-            if (this.isDrawing) {
+            this.isDrawingMode = !this.isDrawingMode;
+            if (this.isDrawingMode) {
                 this.btnSwitchMode.Text = ModeTextDesc;
                 this.txtComment.Visible = false;
                 this.picDraw.Visible = true;
@@ -121,6 +137,32 @@ namespace TwoDoubleThree {
                 this.txtComment.Visible = true;
                 this.picDraw.Visible = false;
             }
+        }
+
+        private void picDraw_MouseDown(object sender, MouseEventArgs e) {
+            this.isMouseDown = true;
+            picDraw_MouseMove(sender, e);
+        }
+        private void picDraw_MouseMove(object sender, MouseEventArgs e) {
+            if (this.isMouseDown) {
+                if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+                    for (int i = -PenRadius; i <= PenRadius; ++i) {
+                        int t = (int)Math.Round(Math.Sqrt(PenRadius * PenRadius - i * i));
+                        for (int j = -t; j < t; ++j)
+                            this.drawnBitmap.SetPixel(e.X + i, e.Y + j, Color.Red);
+                    }
+                } else if ((e.Button & MouseButtons.Right) == MouseButtons.Right) {
+                    for (int i = -PenRadius; i <= PenRadius; ++i) {
+                        int t = (int)Math.Round(Math.Sqrt(PenRadius * PenRadius - i * i));
+                        for (int j = -t; j < t; ++j)
+                            this.drawnBitmap.SetPixel(e.X + i, e.Y + j, picDraw.BackColor);
+                    }
+                }
+                this.picDraw.Image = this.drawnBitmap;
+            }
+        }
+        private void picDraw_MouseUp(object sender, MouseEventArgs e) {
+            this.isMouseDown = false;
         }
 
         private void updColour_ValueChanged(object sender, EventArgs e) {
