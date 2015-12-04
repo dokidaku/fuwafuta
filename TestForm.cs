@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TwoDoubleThree {
@@ -181,6 +182,9 @@ namespace TwoDoubleThree {
             }
         }
 
+        private bool colorDiff(Color a, Color b) {
+            return a.R != b.R || a.G != b.G || a.B != b.B;
+        }
         private void btnSubmit_Click(object sender, EventArgs e) {
             int typeIdx;
             for (typeIdx = 0; typeIdx < 3; ++typeIdx)
@@ -190,7 +194,36 @@ namespace TwoDoubleThree {
             g = (int)this.updColour[1].Value;
             b = (int)this.updColour[2].Value;
             Color c = Color.FromArgb(r, g, b);
-            this.pool.Fire((BulletType)typeIdx, this.txtComment.Text, c);
+            if (this.isDrawingMode) {
+                StringBuilder s = new StringBuilder();
+                int w = this.drawnBitmap.Width, h = this.drawnBitmap.Height;
+                bool[, ] pixels = new bool[w, h];
+                int minX = w, maxX = -1;
+                for (int i = 0; i < w; ++i)
+                    for (int j = 0; j < h; ++j) {
+                        pixels[i, j] = colorDiff(this.drawnBitmap.GetPixel(i, j), picDraw.BackColor);
+                        if (pixels[i, j]) {
+                            if (minX > i) minX = i;
+                            if (maxX < i) maxX = i;
+                        }
+                    }
+                if (minX > maxX) return;
+                s.Append("#" + (maxX - minX + 1) + " " + h);
+                int counter = 0;
+                bool lastPixel = false;
+                for (int j = 0; j < h; ++j)
+                    for (int i = minX; i <= maxX; ++i) {
+                        if (pixels[i, j] ^ lastPixel) {
+                            s.Append(" " + counter);
+                            counter = 1;
+                        } else ++counter;
+                        lastPixel = pixels[i, j];
+                    }
+                s.Append(" " + counter);
+                this.pool.Fire((BulletType)typeIdx, s.ToString(), c);
+            } else {
+                this.pool.Fire((BulletType)typeIdx, this.txtComment.Text, c);
+            }
         }
 
         private void lblColourDisp_Click(object sender, EventArgs e) {
