@@ -6,26 +6,35 @@ using System.Windows.Forms;
 namespace TwoDoubleThree {
     public class TestForm : Form {
         private TextBox txtComment;
-        private Button btnSubmit;
+        private PictureBox picDraw;
+        private Button btnSubmit, btnSwitchMode;
         private RadioButton[] optCommentType = new RadioButton[3];
-        private static string[] CommentTypeDesc = new string[3] {
-            "Top sliding", "Top sticky", "Bottom sticky"
-        };
         private Label lblColourDisp;
         private NumericUpDown[] updColour = new NumericUpDown[3];
 
+        private static string[] CommentTypeDesc = new string[3] {
+            "Top sliding", "Top sticky", "Bottom sticky"
+        };
+        private static string ModeTextDesc = "Aa";
+        private static string ModeDrawDesc = "&#";
         private DanmakuPool pool;
-
         private Random r;
+
+        private bool isDrawing;
 
         public TestForm() {
             this.InitializeComponent();
             this.r = new Random();
+            this.isDrawing = false;
         }
 
         private void refreshDisp() {
-            this.txtComment.Location = new Point(6, 6);
+            this.txtComment.Location = this.picDraw.Location = new Point(6, 6);
             this.txtComment.Size = new Size(this.Size.Width - 18, 0);
+            this.picDraw.Size = this.txtComment.Size;   // XXX: Can be written in one line using B = A = ...
+            this.btnSwitchMode.Location = new Point(
+                this.Size.Width - this.btnSwitchMode.Size.Width - 18,
+                txtComment.Location.Y + txtComment.Size.Height + 12);
             this.btnSubmit.Size = new Size(120, 40);
             this.btnSubmit.Location = new Point(6, this.Size.Height - btnSubmit.Size.Height - 30);
         }
@@ -35,6 +44,19 @@ namespace TwoDoubleThree {
             this.txtComment.Font = new Font(BulletDisp.FontName, 28);
             this.Controls.Add(this.txtComment);
             this.txtComment.TabIndex = 0;
+            this.picDraw = new PictureBox();
+            this.picDraw.Size = this.txtComment.Size;
+            this.picDraw.BorderStyle = BorderStyle.FixedSingle;
+            this.picDraw.Visible = false;
+            this.Controls.Add(this.picDraw);
+
+            this.btnSwitchMode = new Button();
+            this.btnSwitchMode.Font = new Font(BulletDisp.FontName, 14);
+            this.btnSwitchMode.Text = ModeDrawDesc;
+            this.btnSwitchMode.Size = new Size(54, 28);
+            this.Controls.Add(this.btnSwitchMode);
+            this.btnSwitchMode.Click += btnSwitchMode_Click;
+            this.btnSwitchMode.TabIndex = 1;
 
             this.btnSubmit = new Button();
             this.btnSubmit.Font = new Font(BulletDisp.FontName, 20);
@@ -51,7 +73,7 @@ namespace TwoDoubleThree {
                 this.optCommentType[i].Location = new Point(6,
                     txtComment.Location.Y + txtComment.Size.Height + 12 + (this.optCommentType[i].Size.Height + 6) * i);
                 this.Controls.Add(this.optCommentType[i]);
-                this.optCommentType[i].TabIndex = 1 + i;
+                this.optCommentType[i].TabIndex = 10 + i;
             }
             this.optCommentType[0].Select();
 
@@ -67,7 +89,7 @@ namespace TwoDoubleThree {
                 );
                 this.Controls.Add(this.updColour[i]);
                 this.updColour[i].ValueChanged += updColour_ValueChanged;
-                this.updColour[i].TabIndex = 4 + i;
+                this.updColour[i].TabIndex = 20 + i;
             }
             this.lblColourDisp = new Label();
             this.lblColourDisp.AutoSize = false;
@@ -86,6 +108,19 @@ namespace TwoDoubleThree {
 
             this.pool = new DanmakuPool();
             pool.RepresentativeForm().ShowInTaskbar = false;
+        }
+
+        private void btnSwitchMode_Click(object sender, EventArgs e) {
+            this.isDrawing = !this.isDrawing;
+            if (this.isDrawing) {
+                this.btnSwitchMode.Text = ModeTextDesc;
+                this.txtComment.Visible = false;
+                this.picDraw.Visible = true;
+            } else {
+                this.btnSwitchMode.Text = ModeDrawDesc;
+                this.txtComment.Visible = true;
+                this.picDraw.Visible = false;
+            }
         }
 
         private void updColour_ValueChanged(object sender, EventArgs e) {
