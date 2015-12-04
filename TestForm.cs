@@ -146,15 +146,15 @@ namespace TwoDoubleThree {
         private void picDraw_MouseMove(object sender, MouseEventArgs e) {
             if (this.isMouseDown) {
                 if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
-                    for (int i = -PenRadius; i <= PenRadius; ++i) {
+                    for (int i = -PenRadius; i <= PenRadius; ++i) if (e.X + i >= 0) {
                         int t = (int)Math.Round(Math.Sqrt(PenRadius * PenRadius - i * i));
-                        for (int j = -t; j < t; ++j)
+                        for (int j = -t; j < t; ++j) if (e.Y + j >= 0 && e.Y + j < picDraw.Height)
                             this.drawnBitmap.SetPixel(e.X + i, e.Y + j, Color.Red);
                     }
                 } else if ((e.Button & MouseButtons.Right) == MouseButtons.Right) {
-                    for (int i = -PenRadius; i <= PenRadius; ++i) {
+                    for (int i = -PenRadius; i <= PenRadius; ++i) if (e.X + i >= 0) {
                         int t = (int)Math.Round(Math.Sqrt(PenRadius * PenRadius - i * i));
-                        for (int j = -t; j < t; ++j)
+                        for (int j = -t; j < t; ++j) if (e.Y + j >= 0 && e.Y + j < picDraw.Height)
                             this.drawnBitmap.SetPixel(e.X + i, e.Y + j, picDraw.BackColor);
                     }
                 }
