@@ -24,6 +24,7 @@ app.get('/admin', function (req, res) {
 // TODO: Make use of SocketIO's group mechanism
 var adminSocket = null;
 var comments = [];
+var commentsAcc = [];
 // NOTE: Should an array be used to store all the sockets??
 // http://stackoverflow.com/q/8467784
 
@@ -43,6 +44,9 @@ io.on('connection', function (socket) {
             socket.isAdmin = true;
             adminSocket = socket;
             clearTimeout(passcodeTimer);
+            // Clear accumulated comments
+            for (var c in commentsAcc) socket.emit('comment', commentsAcc[c]);
+            commentsAcc = [];
         }
         if (socket.isAdmin) {
             socket.emit('verifyResult', 'ok');
@@ -55,7 +59,11 @@ io.on('connection', function (socket) {
         socket.emit('commentReceived', cmt);
         cmt.author = socket.id;
         comments.push(cmt);
-        adminSocket.emit('comment', cmt);
+        if (adminSocket) {
+            adminSocket.emit('comment', cmt);
+        } else {
+            commentsAcc.push(cmt);
+        }
     });
     socket.on('accept', function (data) {
         if (socket.isAdmin) {
