@@ -24,14 +24,25 @@ socket.on('verifyResult', function (r) {
     }
 });
 
+var clearDisplay = function (id, isAccepted) {
+    $('#reject-ask-' + id).remove();
+    $('#comment-li-' + id).addClass(isAccepted ? 'past-accepted' : 'past-rejected');
+    $('#accept-a-' + id).attr('href', 'javascript:;');
+    $('#reject-a-' + id).attr('href', 'javascript:;');
+    $('#reject-a-' + id).removeClass('invisible');
+    if (isAccepted) $('#reject-a-' + id).addClass('hidden');
+    else $('#accept-a-' + id).addClass('hidden');
+};
 var sendAccept = function (id) {
     socket.emit('accept', { id: id });
+    clearDisplay(id, true);
 };
 var sendReject = function (id, reason) {
     socket.emit('reject', { id: id, reason: reason });
+    clearDisplay(id, false);
 };
 var fillRejectInput = function (id, str) {
-    $('#comment-ipt-' + id).val(str);
+    $('#comment-ipt-' + id).val(str).focus();
 };
 var createReasonShortcut = function (obj, id, str) {
     obj.append($('<a>')
@@ -41,12 +52,14 @@ var createReasonShortcut = function (obj, id, str) {
     ).append($('<br>'));
 };
 var askReject = function (id) {
-    $('#reject-a-' + id).addClass('hidden');
+    $('#reject-a-' + id).addClass('invisible');
     var div = $('<div>')
         .addClass('reject-ask')
+        .attr('id', 'reject-ask-' + id)
         .text('Reason?')
         .append($('<input>').attr('id', 'comment-ipt-' + id)
             .css('width', '100%')
+            .attr('placeholder', 'Type and press Enter')
             .keypress((function (_id) { return function (e) {
                 if (e.keyCode === 13) sendReject(_id, $('#comment-ipt-' + id).val());
             }; })(id))
@@ -61,6 +74,7 @@ var commentQueuePush = function (cmt) {
     li.append($('<a>')
         .attr('href', 'javascript:sendAccept(' + cmt.id + ');')
         .addClass('accept-button')
+        .attr('id', 'accept-a-' + cmt.id)
         .append($('<i class="fa fa-check"></i>'))
     ).append($('<a>')
         .attr('href', 'javascript:askReject(' + cmt.id + ');')

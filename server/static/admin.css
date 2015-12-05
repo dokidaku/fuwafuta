@@ -36,9 +36,13 @@
 #console-main li:nth-child(odd) {
     background-color: #f8f8f8;
 }
-#console-main li.past {
-    background-color: #ddd;
-    color: #666; /*666*/
+#console-main li.past-accepted {
+    background-color: #dfd;
+    color: #686; /*666*/
+}
+#console-main li.past-rejected {
+    background-color: #fdd;
+    color: #866; /*666*/
 }
 
 .accept-button {

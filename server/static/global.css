@@ -42,3 +42,6 @@ input {
 .invisible {
     display: none;
 }
+.hidden {
+    visibility: hidden;
+}
