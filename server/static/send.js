@@ -21,8 +21,11 @@ $('#comment-ipt').keypress(function (e) {
     if (e.keyCode === 13) $('#text-send').click();
 });
 $('#text-send').click(function () {
-    $('#text-send-spinner').removeClass('invisible');
-    socket.emit('comment', { text: $('#comment-ipt').val(), type: 1, color: [255, 255, 255] });
+    if ($('#comment-ipt').val().trim() !== '') {
+        $('#text-send-spinner').removeClass('invisible');
+        socket.emit('comment', { text: $('#comment-ipt').val(), type: 1, color: [255, 255, 255] });
+        $('#comment-ipt').val('');
+    }
 });
 
 var isMouseDown = false;
@@ -44,6 +47,29 @@ var drawDot = function (x, y) {
         t = Math.round(Math.sqrt(markerRadius * markerRadius - i * i));
         for (j = -t; j <= t; ++j) setPixel(x + i, y + j);
     }
+};
+var clearSketch = function () {
+    for (var i = 0; i < imgdat.data.length; i += 4)
+        imgdat.data[i] = imgdat.data[i + 1] = imgdat.data[i + 2] = imgdat.data[i + 3] = 0;
+    ctx.putImageData(imgdat, 0, 0);
+};
+var runLenEncode = function () {
+    var s = '#' + canvas[0].width + ' ' + canvas[0].height;
+    var lastPixel = false, curPixel;
+    var counter = 0;
+    for (var i = 0; i < imgdat.data.length; i += 4) {
+        curPixel = imgdat.data[i + 3] &&
+            (imgdat.data[i] != 255 || imgdat.data[i + 1] != 255 || imgdat.data[i + 2] != 255);
+        if (curPixel ^ lastPixel) {
+            s += ' ' + counter;
+            counter = 1;
+        } else {
+            ++counter;
+        }
+        lastPixel = curPixel;
+    }
+    s += ' ' + counter;
+    return s;
 };
 var markerRadius = 3;
 var lastX = -1, lastY = -1;
@@ -78,7 +104,13 @@ $('#draw-cpicker').change(function () {
     ctx.putImageData(imgdat, 0, 0);
 });
 $('#draw-clear').click(function () {
-    for (var i = 0; i < imgdat.data.length; i += 4)
-        imgdat.data[i] = imgdat.data[i + 1] = imgdat.data[i + 2] = imgdat.data[i + 3] = 0;
-    ctx.putImageData(imgdat, 0, 0);
+    clearSketch();
+});
+$('#draw-send').click(function () {
+    $('#draw-send-spinner').removeClass('invisible');
+    socket.emit('comment', {
+        text: runLenEncode(), type: 1,
+        color: [markerColor.r, markerColor.g, markerColor.b]
+    });
+    clearSketch();
 });
