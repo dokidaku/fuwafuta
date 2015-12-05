@@ -1,16 +1,18 @@
 <!doctype html>
 <html>
   <head>
-    <title>Admin Console</title>
+    <title>Client</title>
     <link href='https://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
     <link href='/static/global.css' rel='stylesheet' type='text/css'>
     <link href='/static/send.css' rel='stylesheet' type='text/css'>
-    <script src='https://cdn.socket.io/socket.io-1.2.0.js'></script>
-    <script src='http://code.jquery.com/jquery-1.11.1.js'></script>
-    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
-    <script src='/static/libs/sketch.min.js'></script>
   </head>
   <body>
+    <script src='https://cdn.socket.io/socket.io-1.2.0.js'></script>
+    <script src='http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js'></script>
+    <link rel='stylesheet' href='http://apps.bdimg.com/libs/fontawesome/4.4.0/css/font-awesome.min.css'>
+    <script src='/static/libs/spectrum.js'></script>
+    <link rel='stylesheet' href='/static/libs/spectrum.css'>
+
     <h1 id='title'>TwoDoubleThree</h1>
     <h2 id='subtitle'>Client</h2>
     <div id='client-main'>
@@ -25,8 +27,8 @@
         </div>
         <div id='comment-draw'>
             <div class='tools'>
-                <a href='#sketch' data-tool='marker'><i class="fa fa-pencil"></i></a>
-                <a href='#sketch' data-tool='eraser'><i class="fa fa-eraser"></i></a>
+                <input id='draw-cpicker' type='text'>
+                <button id='draw-clear'><i class="fa fa-eraser"></i> Clear</button>
             </div>
             <canvas id='sketch' width='400px' height='80px'></canvas>
             <button id='draw-send'>
