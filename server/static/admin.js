@@ -84,6 +84,31 @@ var commentQueuePush = function (cmt) {
     );
     $('#console-main').prepend(li);
 };
+var commentQueuePushPic = function (cmt) {
+    var s = cmt.text.substr(1).split(' ');
+    cmt.text = '';
+    commentQueuePush(cmt);
+    var canvas = $('<canvas>')
+        .attr('id', 'draw-disp-' + cmt.id)
+        .attr('width', s[0])
+        .attr('height', s[1]);
+    $('#comment-li-' + cmt.id).prepend(canvas);
+    var ctx = canvas[0].getContext('2d');
+    var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
+    var i, j = 0, t;
+    for (i = 2; i < s.length; ++i) {
+        t = j + s[i] * 4;
+        if (i % 2 == 1) for (; j < t; j += 4) {
+            imgdat.data[j] = cmt.color[0];
+            imgdat.data[j + 1] = cmt.color[1];
+            imgdat.data[j + 2] = cmt.color[2];
+            imgdat.data[j + 3] = 255;
+        } else {
+            j = t;
+        }
+    }
+    ctx.putImageData(imgdat, 0, 0);
+};
 
 socket.on('comment', function (cmt) {
     if (cmt.text[0] === '#') {
@@ -92,6 +117,7 @@ socket.on('comment', function (cmt) {
             commentQueuePush(cmt);
         } else {
             // TODO: Handle pictures
+            commentQueuePushPic(cmt);
         }
     } else {
         commentQueuePush(cmt);

@@ -3,11 +3,39 @@ var socket = io();
 socket.on('commentReceived', function (cmt) {
     $('#text-send-spinner').addClass('invisible');
     $('#draw-send-spinner').addClass('invisible');
+    var s = null;
+    if (cmt.text[0] == '#') {
+        if (cmt.text[1] == '#') cmt.text = cmt.text.substr(1);
+        else { s = cmt.text.substr(1).split(' '); cmt.text = ''; }
+    }
     $('#cmt-list').append($('<li>')
         .attr('id', 'cmt-disp-' + cmt.id)
         .text(cmt.text)
         .css('color', cmt.color)
     );
+    if (s) {
+        // TODO: Reduce code duplication
+        var canvas = $('<canvas>')
+            .attr('id', 'draw-disp-' + cmt.id)
+            .attr('width', s[0])
+            .attr('height', s[1]);
+        $('#cmt-disp-' + cmt.id).prepend(canvas);
+        var ctx = canvas[0].getContext('2d');
+        var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
+        var i, j = 0, t;
+        for (i = 2; i < s.length; ++i) {
+            t = j + s[i] * 4;
+            if (i % 2 == 1) for (; j < t; j += 4) {
+                imgdat.data[j] = cmt.color[0];
+                imgdat.data[j + 1] = cmt.color[1];
+                imgdat.data[j + 2] = cmt.color[2];
+                imgdat.data[j + 3] = 255;
+            } else {
+                j = t;
+            }
+        }
+        ctx.putImageData(imgdat, 0, 0);
+    }
 });
 socket.on('commentAccepted', function (msg) {
     $('#cmt-disp-' + msg.id).addClass('past-accepted');
