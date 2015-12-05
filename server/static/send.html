@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Console</title>
+    <link href='https://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
+    <link href='/static/global.css' rel='stylesheet' type='text/css'>
+    <link href='/static/send.css' rel='stylesheet' type='text/css'>
+    <script src='https://cdn.socket.io/socket.io-1.2.0.js'></script>
+    <script src='http://code.jquery.com/jquery-1.11.1.js'></script>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
+    <script src='/static/libs/sketch.min.js'></script>
+  </head>
+  <body>
+    <h1 id='title'>TwoDoubleThree</h1>
+    <h2 id='subtitle'>Client</h2>
+    <div id='client-main'>
+        <div id='cmt-list' class='cmt-list-container'>
+        </div>
+        <div id='comment-text'>
+            <input id='comment-ipt' placeholder='233...'>
+            <button id='text-send'>
+                <i class='fa fa-paper-plane'></i>
+                <i id='text-send-spinner' class='invisible fa fa-spinner fa-spin'></i>
+            </button>
+        </div>
+        <div id='comment-draw'>
+            <div class='tools'>
+                <a href='#sketch' data-tool='marker'><i class="fa fa-pencil"></i></a>
+                <a href='#sketch' data-tool='eraser'><i class="fa fa-eraser"></i></a>
+            </div>
+            <canvas id='sketch' width='400px' height='80px'></canvas>
+            <button id='draw-send'>
+                <i class='fa fa-paper-plane'></i>
+                <i id='draw-send-spinner' class='invisible fa fa-spinner fa-spin'></i>
+            </button>
+        </div>
+    </div>
+    <script src='/static/send.js'></script>
+  </body>
+</html>

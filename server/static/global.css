@@ -45,3 +45,25 @@ input {
 .hidden {
     visibility: hidden;
 }
+
+.cmt-list-container {
+    list-style-type: none;
+    margin: 1em 0;
+    padding: 0;
+    font-size: 1.5em;
+}
+.cmt-list-container li {
+    padding: 5px 10px;
+    background-color: #eee;
+}
+.cmt-list-container li:nth-child(odd) {
+    background-color: #f8f8f8;
+}
+.cmt-list-container li.past-accepted {
+    background-color: #dfd;
+    color: #686; /*666*/
+}
+.cmt-list-container li.past-rejected {
+    background-color: #fdd;
+    color: #866; /*666*/
+}

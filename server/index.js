@@ -20,6 +20,9 @@ app.use('/static', express.static(__dirname + '/static'));
 app.get('/admin', function (req, res) {
     res.sendFile(__dirname + '/static/admin.html');
 });
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/static/send.html');
+});
 
 // TODO: Make use of SocketIO's group mechanism
 var adminSocket = null;
@@ -68,12 +71,14 @@ io.on('connection', function (socket) {
     socket.on('accept', function (data) {
         if (socket.isAdmin) {
             console.log(comments[data.id]);
-            io.sockets.connected[comments[data.id].author].emit('commentAccepted', data);
+            if (io.sockets.connected[comments[data.id].author])
+                io.sockets.connected[comments[data.id].author].emit('commentAccepted', data);
         }
     });
     socket.on('reject', function (data) {
         if (socket.isAdmin) {
-            io.sockets.connected[comments[data.id].author].emit('commentRejected', data);
+            if (io.sockets.connected[comments[data.id].author])
+                io.sockets.connected[comments[data.id].author].emit('commentRejected', data);
         }
     });
 });

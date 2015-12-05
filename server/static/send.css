@@ -1,0 +1,26 @@
+#client-main {
+    margin: 1em 0;
+    padding: 0;
+    font-size: 1.5em;
+}
+
+#cmt-list {
+    font-size: 0.5em;
+}
+button .invisible {
+    display: none;
+}
+
+#comment-ipt {
+    width: 80%;
+}
+#text-send, #draw-send {
+    width: 15%;
+    float: right;
+}
+
+#sketch {
+    border: 1px solid;
+    border-radius: 2px;
+    background: white;
+}
