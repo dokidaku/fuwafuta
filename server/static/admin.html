@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Console</title>
+    <link href='https://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 24px 'Comfortaa', Helvetica, Arial; margin: 12px; }
+      h2 { font-weight: 400; }
+      button {
+        border: 1px solid black; background: #ccc; border-radius: 2px;
+        font: 24px 'Comfortaa', Helevetica, Arial; padding: 0.3em; margin-top: 0.3em;
+      }
+      button:focus, button:hover { background: #ddd; }
+      .light { font-weight: 100; }
+      .invisible { display: none; }
+      #title, #subtitle { color: #551; }
+      #title.verified, #subtitle.verified { color: #aa6; }
+      #psw-enter { margin: 12px; }
+      #ipt-passcode {
+        border-width: 0px 0px 2px 0px; border-style: solid; border-color: #ccc;
+        width: 100%;
+        font: 1.5em 'Comfortaa', Helvetica, Arial;
+      }
+      #ipt-passcode:focus { border-color: #999; }
+      #message-disp { color: red; font-weight: 100; }
+    </style>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  </head>
+  <body>
+    <h1 id='title'>TwoDoubleThree</h1>
+    <h2 id='subtitle'>Administration Verification</h2>
+    <div id='psw-enter'>
+      <h2 class='light'>Passcode: </h2>
+      <input id='ipt-passcode' type='password'></input><br>
+      <button id='btn-submit' type='button'>Ok</button><br>
+      <h2 id='message-disp'></h2>
+    </div>
+    <div id='console-main' class='invisible'>
+    </div>
+    <script>
+      var socket = io();
+      // TODO: Replace with a form and a <button type='submit'>
+      $('#ipt-passcode').keypress(function (e) {
+          if (e.keyCode === 13) $('#btn-submit').click();
+      });
+      $('#btn-submit').click(function () {
+        var passcode = $('#ipt-passcode').val();
+        $('#message-disp').text('Connecting...');
+        socket.emit('verify', passcode);
+      });
+      socket.on('verifyResult', function (r) {
+        if (r === 'ok') {
+          // console.log('Administrator access granted! *\\(^o^)/*');
+          $('#subtitle').text('Administration Console').addClass('verified');
+          $('#title').addClass('verified');
+          $('#psw-enter').addClass('invisible');
+          $('#console-main').removeClass('invisible');
+        } else {
+          // console.log('Not really = =#');
+          $('#message-disp').text('Incorrect password (*/ω＼*)');
+        }
+      });
+    </script>
+  </body>
+</html>
