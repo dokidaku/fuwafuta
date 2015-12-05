@@ -1,0 +1,36 @@
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+body {
+    font: 24px 'Comfortaa', Helvetica, Arial; margin: 12px;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+button {
+    border: 1px solid black;
+    border-style: solid;
+    border-radius: 2px;
+    background: #ccc;
+    font: 24px 'Comfortaa', Helevetica, Arial;
+    padding: 0.3em;
+    margin-top: 0.3em;
+}
+
+button:focus, button:hover {
+    background: #ddd;
+}
+button:active {
+    background: #aaa;
+}
+
+.light {
+    font-weight: 100;
+}
+
+.invisible {
+    display: none;
+}
