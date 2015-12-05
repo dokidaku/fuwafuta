@@ -27,18 +27,44 @@ socket.on('verifyResult', function (r) {
 var sendAccept = function (id) {
     socket.emit('accept', { id: id });
 };
-var sendReject = function (id) {
-    socket.emit('reject', { id: id });
+var sendReject = function (id, reason) {
+    socket.emit('reject', { id: id, reason: reason });
+};
+var fillRejectInput = function (id, str) {
+    $('#comment-ipt-' + id).val(str);
+};
+var createReasonShortcut = function (obj, id, str) {
+    obj.append($('<a>')
+        .attr('href', 'javascript:fillRejectInput(' + id + ', "' + str + '");')
+        .addClass('reject-reason-shortcut')
+        .text(str)
+    ).append($('<br>'));
+};
+var askReject = function (id) {
+    $('#reject-a-' + id).addClass('hidden');
+    var div = $('<div>')
+        .addClass('reject-ask')
+        .text('Reason?')
+        .append($('<input>').attr('id', 'comment-ipt-' + id)
+            .css('width', '100%')
+            .keypress((function (_id) { return function (e) {
+                if (e.keyCode === 13) sendReject(_id, $('#comment-ipt-' + id).val());
+            }; })(id))
+        );
+    createReasonShortcut(div, id, 'Improper language');
+    createReasonShortcut(div, id, 'Got it, but not on the screen');
+    $('#comment-li-' + id).append(div);
 };
 
 var commentQueuePush = function (cmt) {
-    var li = $('<li>').text(cmt.text);
+    var li = $('<li>').text(cmt.text).attr('id', 'comment-li-' + cmt.id);
     li.append($('<a>')
         .attr('href', 'javascript:sendAccept(' + cmt.id + ');')
         .addClass('accept-button')
         .append($('<i class="fa fa-check"></i>'))
     ).append($('<a>')
-        .attr('href', 'javascript:sendReject(' + cmt.id + ');')
+        .attr('href', 'javascript:askReject(' + cmt.id + ');')
+        .attr('id', 'reject-a-' + cmt.id)
         .addClass('reject-button')
         .append($('<i class="fa fa-close"></i>'))
     );

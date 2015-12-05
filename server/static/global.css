@@ -27,6 +27,14 @@ button:active {
     background: #aaa;
 }
 
+input {
+    border-width: 0px 0px 2px 0px;
+    border-style: solid;
+    border-color: #ccc;
+    background: transparent;
+    font: 1.5em 'Comfortaa', Helvetica, Arial;
+}
+
 .light {
     font-weight: 100;
 }
