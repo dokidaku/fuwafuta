@@ -16,6 +16,11 @@ var commenTypeIcon = function (type) {
         default: return null;
     }
 };
+var hexCode = function (c) {
+    return '#' + (c[0] < 16 ? '0' : '') + c[0].toString(16) +
+        (c[1] < 16 ? '0' : '') + c[1].toString(16) +
+        (c[2] < 16 ? '0' : '') + c[2].toString(16);
+};
 
 // TODO: Replace with a form and a <button type='submit'>
 $('#ipt-passcode').keypress(function (e) {
@@ -89,7 +94,7 @@ var askReject = function (id) {
 var commentQueuePush = function (cmt) {
     var li = $('<li>').text(cmt.text).attr('id', 'comment-li-' + cmt.id);
     if (!isDark(cmt.color)) li.addClass('dark');
-    li.prepend(commenTypeIcon(cmt.type));
+    li.prepend(commenTypeIcon(cmt.type)).css('color', hexCode(cmt.color));
     li.append($('<a>')
         .attr('href', 'javascript:sendAccept(' + cmt.id + ');')
         .addClass('accept-button')

@@ -8,6 +8,11 @@ var commenTypeIcon = function (type) {
         default: return null;
     }
 };
+var hexCode = function (c) {
+    return '#' + (c[0] < 16 ? '0' : '') + c[0].toString(16) +
+        (c[1] < 16 ? '0' : '') + c[1].toString(16) +
+        (c[2] < 16 ? '0' : '') + c[2].toString(16);
+};
 
 socket.on('commentReceived', function (cmt) {
     $('#text-send-spinner').addClass('invisible');
@@ -20,7 +25,7 @@ socket.on('commentReceived', function (cmt) {
     $('#cmt-list').append($('<li>')
         .attr('id', 'cmt-disp-' + cmt.id)
         .text(cmt.text)
-        .css('color', cmt.color)
+        .css('color', hexCode(cmt.color))
         .addClass(isDark(cmt.color) ? '' : 'dark')
         .prepend(commenTypeIcon(cmt.type))
     );
@@ -73,7 +78,11 @@ $('#comment-ipt').keypress(function (e) {
 $('#text-send').click(function () {
     if ($('#comment-ipt').val().trim() !== '') {
         $('#text-send-spinner').removeClass('invisible');
-        socket.emit('comment', { text: $('#comment-ipt').val(), type: 1, color: cmtColor });
+        socket.emit('comment', {
+            text: $('#comment-ipt').val(),
+            type: 1,
+            color: [cmtColor.r, cmtColor.g, cmtColor.b]
+        });
         $('#comment-ipt').val('');
     }
 });
