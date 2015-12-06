@@ -19,12 +19,23 @@ button {
     padding: 0.3em;
     margin-top: 0.3em;
 }
-
 button:focus, button:hover {
     background: #ddd;
 }
 button:active {
     background: #aaa;
+}
+button.highlight {
+    background: #fc6;
+}
+button.highlight:focus, button.highlight:hover {
+    background: #fd8;
+}
+button.highlight:active {
+    background: #b95;
+}
+button.small {
+    padding: 1px;
 }
 
 input {

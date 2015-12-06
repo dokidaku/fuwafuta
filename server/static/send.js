@@ -72,6 +72,7 @@ $('#btn-toggle-mode').click(function () {
 
 // General comment information
 var cmtColor = { r: 0, g: 0, b: 0 };
+var cmtType = 0;
 
 // Text-related operations
 $('#comment-ipt').keypress(function (e) {
@@ -82,7 +83,7 @@ $('#text-send').click(function () {
         $('#text-send-spinner').removeClass('invisible');
         socket.emit('comment', {
             text: $('#comment-ipt').val(),
-            type: 1,
+            type: cmtType,
             color: [cmtColor.r, cmtColor.g, cmtColor.b]
         });
         $('#comment-ipt').val('');
@@ -189,3 +190,15 @@ $('#color-picker').change(function () {
     ctx.putImageData(imgdat, 0, 0);
     canvas.css('background-color', bg);
 });
+
+var typeChange = function (type) {
+    cmtType = type;
+    $('#btn-type-0').removeClass('highlight');
+    $('#btn-type-1').removeClass('highlight');
+    $('#btn-type-2').removeClass('highlight');
+    $('#btn-type-' + type).addClass('highlight');
+};
+var btnTypeWidth = $('#btn-type-0').height() * 1.2;
+$('#btn-type-0').click(function () { typeChange(0); }).width(btnTypeWidth);
+$('#btn-type-1').click(function () { typeChange(1); }).width(btnTypeWidth);
+$('#btn-type-2').click(function () { typeChange(2); }).width(btnTypeWidth);
