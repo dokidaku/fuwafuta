@@ -12,15 +12,14 @@ socket.on('commentReceived', function (cmt) {
         .attr('id', 'cmt-disp-' + cmt.id)
         .text(cmt.text)
         .css('color', cmt.color)
+        .addClass(isDark(cmt.color) ? '' : 'dark')
     );
     if (s) {
         // TODO: Reduce code duplication
-        var bg = (isDark(cmtColor) ? 'transparent' : '#444');
         var canvas = $('<canvas>')
             .attr('id', 'draw-disp-' + cmt.id)
             .attr('width', s[0])
-            .attr('height', s[1])
-            .css('background-color', bg);;
+            .attr('height', s[1]);
         $('#cmt-disp-' + cmt.id).prepend(canvas);
         var ctx = canvas[0].getContext('2d');
         var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
@@ -64,7 +63,7 @@ $('#comment-ipt').keypress(function (e) {
 $('#text-send').click(function () {
     if ($('#comment-ipt').val().trim() !== '') {
         $('#text-send-spinner').removeClass('invisible');
-        socket.emit('comment', { text: $('#comment-ipt').val(), type: 1, color: [255, 255, 255] });
+        socket.emit('comment', { text: $('#comment-ipt').val(), type: 1, color: cmtColor });
         $('#comment-ipt').val('');
     }
 });

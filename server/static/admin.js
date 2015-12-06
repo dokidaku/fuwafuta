@@ -79,6 +79,7 @@ var askReject = function (id) {
 
 var commentQueuePush = function (cmt) {
     var li = $('<li>').text(cmt.text).attr('id', 'comment-li-' + cmt.id);
+    if (!isDark(cmt.color)) li.addClass('dark');
     li.append($('<a>')
         .attr('href', 'javascript:sendAccept(' + cmt.id + ');')
         .addClass('accept-button')
@@ -96,12 +97,10 @@ var commentQueuePushPic = function (cmt) {
     var s = cmt.text.substr(1).split(' ');
     cmt.text = '';
     commentQueuePush(cmt);
-    var bg = (isDark(cmt.color) ? 'transparent' : '#444');
     var canvas = $('<canvas>')
         .attr('id', 'draw-disp-' + cmt.id)
         .attr('width', s[0])
-        .attr('height', s[1])
-        .css('background-color', bg);
+        .attr('height', s[1]);
     $('#comment-li-' + cmt.id).prepend(canvas);
     var ctx = canvas[0].getContext('2d');
     var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);

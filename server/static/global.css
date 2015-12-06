@@ -61,9 +61,24 @@ input {
 }
 .cmt-list-container li.past-accepted {
     background-color: #dfd;
-    color: #686; /*666*/
+    color: #686;
 }
 .cmt-list-container li.past-rejected {
     background-color: #fdd;
-    color: #866; /*666*/
+    color: #866;
+}
+.cmt-list-container li.dark {
+    background-color: #333;
+    color: #f8f8f8;
+}
+.cmt-list-container li.dark:nth-child(odd) {
+    background-color: #444;
+}
+.cmt-list-container li.past-accepted.dark {
+    background-color: #686;
+    color: #dfd;
+}
+.cmt-list-container li.past-rejected.dark {
+    background-color: #866;
+    color: #fdd;
 }
