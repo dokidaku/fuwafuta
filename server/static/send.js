@@ -2,9 +2,9 @@ var socket = io();
 
 var commenTypeIcon = function (type) {
     switch (type) {
-        case 0: return $('<i class="fa fa-long-arrow-left"></i>&nbsp;');
-        case 1: return $('<i class="fa fa-level-up"></i>&nbsp;');
-        case 2: return $('<i class="fa fa-level-down"></i>&nbsp;');
+        case 0: return $('<i class="cmt-type-icon fa fa-long-arrow-left"></i>&nbsp;');
+        case 1: return $('<i class="cmt-type-icon fa fa-level-up"></i>&nbsp;');
+        case 2: return $('<i class="cmt-type-icon fa fa-level-down"></i>&nbsp;');
         default: return null;
     }
 };

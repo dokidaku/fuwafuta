@@ -82,3 +82,7 @@ input {
     background-color: #866;
     color: #fdd;
 }
+.cmt-type-icon {
+    margin: 0px 0.5em;
+    float: left;
+}
