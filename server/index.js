@@ -26,6 +26,7 @@ app.get('/', function (req, res) {
 
 // TODO: Make use of SocketIO's group mechanism
 var adminSocket = null;
+var dispSocket = null;
 var comments = [];
 var commentsAcc = [];
 // NOTE: Should an array be used to store all the sockets??
@@ -33,12 +34,17 @@ var commentsAcc = [];
 
 io.on('connection', function (socket) {
     socket.isAdmin = false;
+    socket.isDisp = false;
     socket.on('disconnect', function () {
         if (socket.isAdmin) {
             console.info('Administrator disconnected!');
             adminSocket = null;
             passcode_regen();
             passcodeTimer = setInterval(passcode_regen, 15000);
+        }
+        if (socket.isDisp) {
+            console.info('Displayer disconnected!');
+            dispSocket = null;
         }
     });
     socket.on('verify', function (psw) {
@@ -57,6 +63,18 @@ io.on('connection', function (socket) {
             socket.emit('verifyResult', 'QwQ');
         }
     });
+    socket.on('registAsDisp', function () {
+        if (!dispSocket) {
+            console.info('Displayer connected!');
+            socket.isDisp = true;
+            dispSocket = socket;
+        }
+        if (socket.isDisp) {
+            socket.emit('registResult', 'ok');
+        } else {
+            socket.emit('registResult', 'QwQ');
+        }
+    });
     socket.on('comment', function (cmt) {
         cmt.id = comments.length;
         socket.emit('commentReceived', cmt);
@@ -73,6 +91,7 @@ io.on('connection', function (socket) {
             console.log(comments[data.id]);
             if (io.sockets.connected[comments[data.id].author])
                 io.sockets.connected[comments[data.id].author].emit('commentAccepted', data);
+            dispSocket.emit('comment', comments[data.id]);
         }
     });
     socket.on('reject', function (data) {
