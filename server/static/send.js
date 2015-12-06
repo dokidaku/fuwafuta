@@ -1,5 +1,14 @@
 var socket = io();
 
+var commenTypeIcon = function (type) {
+    switch (type) {
+        case 0: return $('<i class="fa fa-long-arrow-left"></i>&nbsp;');
+        case 1: return $('<i class="fa fa-level-up"></i>&nbsp;');
+        case 2: return $('<i class="fa fa-level-down"></i>&nbsp;');
+        default: return null;
+    }
+};
+
 socket.on('commentReceived', function (cmt) {
     $('#text-send-spinner').addClass('invisible');
     $('#draw-send-spinner').addClass('invisible');
@@ -13,6 +22,7 @@ socket.on('commentReceived', function (cmt) {
         .text(cmt.text)
         .css('color', cmt.color)
         .addClass(isDark(cmt.color) ? '' : 'dark')
+        .prepend(commenTypeIcon(cmt.type))
     );
     if (s) {
         // TODO: Reduce code duplication

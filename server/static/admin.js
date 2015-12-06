@@ -8,6 +8,15 @@ var isDark = function (c) {
     }
 };
 
+var commenTypeIcon = function (type) {
+    switch (type) {
+        case 0: return $('<i class="fa fa-long-arrow-left"></i>&nbsp;');
+        case 1: return $('<i class="fa fa-level-up"></i>&nbsp;');
+        case 2: return $('<i class="fa fa-level-down"></i>&nbsp;');
+        default: return null;
+    }
+};
+
 // TODO: Replace with a form and a <button type='submit'>
 $('#ipt-passcode').keypress(function (e) {
     if (e.keyCode === 13) $('#btn-submit').click();
@@ -80,6 +89,7 @@ var askReject = function (id) {
 var commentQueuePush = function (cmt) {
     var li = $('<li>').text(cmt.text).attr('id', 'comment-li-' + cmt.id);
     if (!isDark(cmt.color)) li.addClass('dark');
+    li.prepend(commenTypeIcon(cmt.type));
     li.append($('<a>')
         .attr('href', 'javascript:sendAccept(' + cmt.id + ');')
         .addClass('accept-button')
