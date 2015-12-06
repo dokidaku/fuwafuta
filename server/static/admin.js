@@ -1,5 +1,13 @@
 var socket = io();
 
+var isDark = function (c) {
+    if (c instanceof Array) {
+        return (c[0] * 0.29 + c[1] * 0.60 + c[2] * 0.11) < 128;
+    } else {
+        return (c.r * 0.29 + c.g * 0.60 + c.b * 0.11) < 128;
+    }
+};
+
 // TODO: Replace with a form and a <button type='submit'>
 $('#ipt-passcode').keypress(function (e) {
     if (e.keyCode === 13) $('#btn-submit').click();
@@ -88,10 +96,12 @@ var commentQueuePushPic = function (cmt) {
     var s = cmt.text.substr(1).split(' ');
     cmt.text = '';
     commentQueuePush(cmt);
+    var bg = (isDark(cmt.color) ? 'transparent' : '#444');
     var canvas = $('<canvas>')
         .attr('id', 'draw-disp-' + cmt.id)
         .attr('width', s[0])
-        .attr('height', s[1]);
+        .attr('height', s[1])
+        .css('background-color', bg);
     $('#comment-li-' + cmt.id).prepend(canvas);
     var ctx = canvas[0].getContext('2d');
     var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);

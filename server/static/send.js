@@ -15,10 +15,12 @@ socket.on('commentReceived', function (cmt) {
     );
     if (s) {
         // TODO: Reduce code duplication
+        var bg = (isDark(cmtColor) ? 'transparent' : '#444');
         var canvas = $('<canvas>')
             .attr('id', 'draw-disp-' + cmt.id)
             .attr('width', s[0])
-            .attr('height', s[1]);
+            .attr('height', s[1])
+            .css('background-color', bg);;
         $('#cmt-disp-' + cmt.id).prepend(canvas);
         var ctx = canvas[0].getContext('2d');
         var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
@@ -45,6 +47,17 @@ socket.on('commentRejected', function (msg) {
         .append('<br><i class="fa fa-times"></i>&nbsp;' + msg.reason);
 });
 
+$('#btn-toggle-mode').click(function () {
+    $('#comment-text').toggleClass('invisible');
+    $('#comment-draw').toggleClass('invisible');
+    $('#btn-toggle-mode-i1').toggleClass('invisible');
+    $('#btn-toggle-mode-i2').toggleClass('invisible');
+});
+
+// General comment information
+var cmtColor = { r: 0, g: 0, b: 0 };
+
+// Text-related operations
 $('#comment-ipt').keypress(function (e) {
     if (e.keyCode === 13) $('#text-send').click();
 });
@@ -56,16 +69,23 @@ $('#text-send').click(function () {
     }
 });
 
+// Painting-related operations
+var isDark = function (c) {
+    if (c instanceof Array) {
+        return (c[0] * 0.29 + c[1] * 0.60 + c[2] * 0.11) < 128;
+    } else {
+        return (c.r * 0.29 + c.g * 0.60 + c.b * 0.11) < 128;
+    }
+};
 var isMouseDown = false;
-var markerColor = { r: 0, g: 0, b: 0 };
 var canvas = $('#sketch');
 var ctx = canvas[0].getContext('2d');
 var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
 var setPixel = function (x, y) {
     if (x >= 0 && x < canvas[0].width && y >= 0 && y < canvas[0].height) {
-        imgdat.data[x * 4 + y * canvas[0].width * 4] = markerColor.r;
-        imgdat.data[x * 4 + y * canvas[0].width * 4 + 1] = markerColor.g;
-        imgdat.data[x * 4 + y * canvas[0].width * 4 + 2] = markerColor.b;
+        imgdat.data[x * 4 + y * canvas[0].width * 4] = cmtColor.r;
+        imgdat.data[x * 4 + y * canvas[0].width * 4 + 1] = cmtColor.g;
+        imgdat.data[x * 4 + y * canvas[0].width * 4 + 2] = cmtColor.b;
         imgdat.data[x * 4 + y * canvas[0].width * 4 + 3] = 255;
     }
 };
@@ -116,21 +136,6 @@ $('#sketch').mousemove(function (e) {
         ctx.putImageData(imgdat, 0, 0);
     }
 });
-$('#draw-cpicker').spectrum({ color: '#000' });
-$('#draw-cpicker').change(function () {
-    markerColor = $('#draw-cpicker').spectrum('get').toRgb();
-    // Change the colour of the whole canvas
-    for (var i = 0; i < imgdat.data.length; i += 4) {
-        if (imgdat.data[i + 3] &&
-            (imgdat.data[i] != 255 || imgdat.data[i + 1] != 255 || imgdat.data[i + 2] != 255))
-        {
-            imgdat.data[i] = markerColor.r;
-            imgdat.data[i + 1] = markerColor.g;
-            imgdat.data[i + 2] = markerColor.b;
-        }
-    }
-    ctx.putImageData(imgdat, 0, 0);
-});
 $('#draw-clear').click(function () {
     clearSketch();
 });
@@ -138,7 +143,29 @@ $('#draw-send').click(function () {
     $('#draw-send-spinner').removeClass('invisible');
     socket.emit('comment', {
         text: runLenEncode(), type: 1,
-        color: [markerColor.r, markerColor.g, markerColor.b]
+        color: [cmtColor.r, cmtColor.g, cmtColor.b]
     });
     clearSketch();
+});
+
+// Change settings, updating display etc.
+$('#color-picker').spectrum({ color: '#000' });
+$('#color-picker').change(function () {
+    cmtColor = $('#color-picker').spectrum('get').toRgb();
+    var bg = (isDark(cmtColor) ? 'transparent' : '#444');
+    // Change the colour of the text input
+    $('#comment-ipt').css('color', $('#color-picker').spectrum('get').toRgbString());
+    $('#comment-ipt').css('background-color', bg);
+    // Change the colour of the whole canvas
+    for (var i = 0; i < imgdat.data.length; i += 4) {
+        if (imgdat.data[i + 3] &&
+            (imgdat.data[i] != 255 || imgdat.data[i + 1] != 255 || imgdat.data[i + 2] != 255))
+        {
+            imgdat.data[i] = cmtColor.r;
+            imgdat.data[i + 1] = cmtColor.g;
+            imgdat.data[i + 2] = cmtColor.b;
+        }
+    }
+    ctx.putImageData(imgdat, 0, 0);
+    canvas.css('background-color', bg);
 });

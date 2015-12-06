@@ -7,8 +7,15 @@
 #cmt-list {
     font-size: 0.5em;
 }
+/* Override settings for button */
 button .invisible {
     display: none;
+}
+#btn-toggle-mode, #draw-clear {
+    padding: 0px;
+}
+#btn-toggle-mode {
+    margin: 1em 0px;
 }
 
 #comment-ipt {
