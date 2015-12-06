@@ -54,6 +54,10 @@ var clearDisplay = function (id, isAccepted) {
     $('#reject-a-' + id).removeClass('invisible');
     if (isAccepted) $('#reject-a-' + id).addClass('hidden');
     else $('#accept-a-' + id).addClass('hidden');
+    // Move the item down
+    var handled = $('#handled'), children = handled.children();
+    if (children.length > 10) children.last().remove();
+    $('#comment-li-' + id).prependTo(handled);
 };
 var sendAccept = function (id) {
     socket.emit('accept', { id: id });
@@ -106,7 +110,7 @@ var commentQueuePush = function (cmt) {
         .addClass('reject-button')
         .append($('<i class="fa fa-close"></i>'))
     );
-    $('#console-main').prepend(li);
+    $('#unhandled').prepend(li);
 };
 var commentQueuePushPic = function (cmt) {
     var s = cmt.text.substr(1).split(' ');

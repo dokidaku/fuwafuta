@@ -23,6 +23,10 @@
     font-weight: 100;
 }
 
+hr {
+    margin: 1em;
+}
+
 .accept-button {
     float: right;
     color: #9d8;

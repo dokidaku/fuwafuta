@@ -22,7 +22,9 @@ socket.on('commentReceived', function (cmt) {
         if (cmt.text[1] == '#') cmt.text = cmt.text.substr(1);
         else { s = cmt.text.substr(1).split(' '); cmt.text = ''; }
     }
-    $('#cmt-list').append($('<li>')
+    var cmt_list = $('#cmt-list'), children = cmt_list.children();
+    if (children.length > 10) children.last().remove();
+    cmt_list.prepend($('<li>')
         .attr('id', 'cmt-disp-' + cmt.id)
         .text(cmt.text)
         .css('color', hexCode(cmt.color))
