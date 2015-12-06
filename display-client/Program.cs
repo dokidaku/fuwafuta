@@ -39,8 +39,7 @@ namespace TwoDoubleThree {
                         connectTimer.Dispose();
                         f.Hide();
                         pool = new DanmakuPool();
-                        pool.Fire(BulletType.TOP_STICKY, "aaaa", Color.White);
-                        pool.Fire(BulletType.TOP_SLIDING, "aaaa", Color.White);
+                        pool.Fire(BulletType.TOP_STICKY, "Let's have fun :)", Color.White);
                     };
                     t.Start();
                 } else {

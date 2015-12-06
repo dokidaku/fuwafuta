@@ -127,8 +127,7 @@ var runLenEncode = function () {
     var lastPixel = false, curPixel;
     var counter = 0;
     for (var i = 0; i < imgdat.data.length; i += 4) {
-        curPixel = imgdat.data[i + 3] &&
-            (imgdat.data[i] != 255 || imgdat.data[i + 1] != 255 || imgdat.data[i + 2] != 255);
+        curPixel = imgdat.data[i + 3];
         if (curPixel ^ lastPixel) {
             s += ' ' + counter;
             counter = 1;
@@ -163,7 +162,8 @@ $('#draw-clear').click(function () {
 $('#draw-send').click(function () {
     $('#draw-send-spinner').removeClass('invisible');
     socket.emit('comment', {
-        text: runLenEncode(), type: 1,
+        text: runLenEncode(),
+        type: cmtType,
         color: [cmtColor.r, cmtColor.g, cmtColor.b]
     });
     clearSketch();
@@ -179,9 +179,7 @@ $('#color-picker').change(function () {
     $('#comment-ipt').css('background-color', bg);
     // Change the colour of the whole canvas
     for (var i = 0; i < imgdat.data.length; i += 4) {
-        if (imgdat.data[i + 3] &&
-            (imgdat.data[i] != 255 || imgdat.data[i + 1] != 255 || imgdat.data[i + 2] != 255))
-        {
+        if (imgdat.data[i + 3]) {
             imgdat.data[i] = cmtColor.r;
             imgdat.data[i + 1] = cmtColor.g;
             imgdat.data[i + 2] = cmtColor.b;
