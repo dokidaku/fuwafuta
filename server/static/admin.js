@@ -113,7 +113,7 @@ var commentQueuePush = function (cmt) {
     $('#unhandled').prepend(li);
 };
 var commentQueuePushPic = function (cmt) {
-    var s = cmt.text.substr(1).split(' ');
+    var s = cmt.text.substr(1).split(' ').map(function (e) { return parseInt(e, 36); });;
     cmt.text = '';
     commentQueuePush(cmt);
     var canvas = $('<canvas>')

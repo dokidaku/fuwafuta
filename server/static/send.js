@@ -20,7 +20,10 @@ socket.on('commentReceived', function (cmt) {
     var s = null;
     if (cmt.text[0] == '#') {
         if (cmt.text[1] == '#') cmt.text = cmt.text.substr(1);
-        else { s = cmt.text.substr(1).split(' '); cmt.text = ''; }
+        else {
+            s = cmt.text.substr(1).split(' ').map(function (e) { return parseInt(e, 36); });
+            cmt.text = '';
+        }
     }
     var cmt_list = $('#cmt-list'), children = cmt_list.children();
     if (children.length > 10) children.last().remove();
@@ -123,20 +126,20 @@ var clearSketch = function () {
     ctx.putImageData(imgdat, 0, 0);
 };
 var runLenEncode = function () {
-    var s = '#' + canvas[0].width + ' ' + canvas[0].height;
+    var s = '#' + canvas[0].width.toString(36) + ' ' + canvas[0].height.toString(36);
     var lastPixel = false, curPixel;
     var counter = 0;
     for (var i = 0; i < imgdat.data.length; i += 4) {
         curPixel = imgdat.data[i + 3];
         if (curPixel ^ lastPixel) {
-            s += ' ' + counter;
+            s += ' ' + counter.toString(36);
             counter = 1;
         } else {
             ++counter;
         }
         lastPixel = curPixel;
     }
-    s += ' ' + counter;
+    s += ' ' + counter.toString(36);
     return s;
 };
 var markerRadius = 3;

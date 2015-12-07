@@ -117,7 +117,7 @@ namespace TwoDoubleThree {
                             return;
                         }
                         int[] n = new int[s.Length];
-                        for (int i = 0; i < s.Length; ++i) n[i] = int.Parse(s[i]);
+                        for (int i = 0; i < s.Length; ++i) n[i] = parseBase36(s[i]);
                         if (n[0] <= 0 || n[1] <= 0) {
                             Console.WriteLine("ERROR: Invalid width/height.");
                             return;
@@ -164,6 +164,17 @@ namespace TwoDoubleThree {
             ret.TextColor = color;
             ret.Location = new Point(x, y);
             ret.Hide();
+            return ret;
+        }
+
+        private static int parseBase36(string s) {
+            int ret = 0, a;
+            for (int i = 0; i < s.Length; ++i) {
+                if (s[i] >= '0' && s[i] <= '9') a = s[i] - '0';
+                else if (s[i] >= 'a' && s[i] <= 'z') a = s[i] - 'a' + 10;
+                else a = s[i] - 'A' + 10;
+                ret = ret * 36 + a;
+            }
             return ret;
         }
     }
