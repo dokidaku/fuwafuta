@@ -1,30 +1,56 @@
 ﻿using System;
+using System.Collections;
 using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json.Linq;
 
 namespace TwoDoubleThree {
     public class Program {
+        static string serverUrl = "http://localhost:25252/";
+
         static Form f;
         static Label l;
         static DanmakuPool pool;
         static bool started = false;
         static Timer connectTimer;
+
+        private static void LoadSettings() {
+            string[] lines = File.ReadAllLines("settings.txt", Encoding.UTF8);
+            Hashtable h = new Hashtable(1, 1.0F);
+            string splitter = " - ";
+            for (int i = 0; i < lines.Length; ++i) {
+                int pos = lines[i].IndexOf(splitter);
+                if (pos == -1) continue;
+                h.Add(lines[i].Substring(0, pos), lines[i].Substring(pos + splitter.Length));
+                // Console.WriteLine(lines[i].Substring(0, pos) + '\n' + lines[i].Substring(pos + splitter.Length));
+            }
+            // Load
+            Program.serverUrl = (string)h["Host"];
+            BulletDisp.FontName = (string)h["Font Family"];
+            BulletDisp.DefaultFontSize = int.Parse((string)h["Font Size"]);
+            DanmakuLayer.LineHeight = int.Parse((string)h["Line Height"]);
+            DanmakuLayer.TimerInterval = int.Parse((string)h["Timer Interval"]);
+        }
+
         public static void Main() {
+            LoadSettings();
+
             f = new Form();
             l = new Label();
             l.Font = new Font(BulletDisp.FontName, 28);
-            l.Text = "Initializing (*/ω＼*)";
+            l.Text = "Initializing (*/ω＼*)\nServer: " + serverUrl;
             l.AutoSize = false;
-            f.Size = l.Size = new Size(SystemInformation.WorkingArea.Width, 64);
+            f.Size = l.Size = new Size(SystemInformation.WorkingArea.Width, 108);
             l.Location = new Point(0, 0);
             l.TextAlign = ContentAlignment.MiddleCenter;
             f.Controls.Add(l);
             f.FormBorderStyle = FormBorderStyle.None;
             f.StartPosition = FormStartPosition.CenterScreen;
 
-            Socket socket = IO.Socket("http://localhost:25252/");
+            Socket socket = IO.Socket(serverUrl);
             socket.Connect();
 
             socket.On("registResult", (data) => {

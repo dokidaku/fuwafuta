@@ -62,6 +62,7 @@ namespace TwoDoubleThree {
 
     public class BulletDisp : Control {
         public static String FontName = "华文黑体";
+        public static int DefaultFontSize = 36;
         protected CustomLabel label;
         public static Color BackgroundColor = Color.FromArgb(128, 128, 128);
         public static Color BackgroundReplacement = Color.FromArgb(126, 126, 126);
@@ -80,7 +81,7 @@ namespace TwoDoubleThree {
 
             this.BackColor = BackgroundColor;
             this.TextColor = Color.White;
-            this.FontSize = 36;
+            this.FontSize = DefaultFontSize;
             this.OutlineWidth = 2;
             this.Text = "";
         }

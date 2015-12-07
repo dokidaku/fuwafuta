@@ -1,0 +1,5 @@
+﻿Host - http://localhost:25252/
+Font Family - 华文黑体
+Font Size - 36
+Line Height - 60
+Timer Interval - 40

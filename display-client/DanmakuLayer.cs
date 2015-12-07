@@ -22,7 +22,8 @@ namespace TwoDoubleThree {
 
         public const int XOffset = 20;
         public const int YOffset = 20;
-        public const int LineHeight = 60;
+        public static int LineHeight = 60;
+        public static int TimerInterval = 40;
 
         public DanmakuLayer() {
             this.InitializeComponent();
@@ -31,7 +32,7 @@ namespace TwoDoubleThree {
 
         private void InitializeComponent() {
             this.timer = new Timer();
-            timer.Interval = 40;
+            timer.Interval = TimerInterval;
             timer.Enabled = true;
             timer.Tick += Timer_Tick;
             timer.Start();
