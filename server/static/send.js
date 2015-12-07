@@ -84,8 +84,10 @@ $('#comment-ipt').keypress(function (e) {
 $('#text-send').click(function () {
     if ($('#comment-ipt').val().trim() !== '') {
         $('#text-send-spinner').removeClass('invisible');
+        var text = $('#comment-ipt').val();
+        if (text[0] === '#') text = '#' + text;
         socket.emit('comment', {
-            text: $('#comment-ipt').val(),
+            text: text,
             type: cmtType,
             color: [cmtColor.r, cmtColor.g, cmtColor.b]
         });
