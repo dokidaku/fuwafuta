@@ -14,6 +14,7 @@ var hexCode = function (c) {
         (c[2] < 16 ? '0' : '') + c[2].toString(16);
 };
 
+var imgDispScale = 0.7;
 socket.on('commentReceived', function (cmt) {
     $('#text-send-spinner').addClass('invisible');
     $('#draw-send-spinner').addClass('invisible');
@@ -36,10 +37,12 @@ socket.on('commentReceived', function (cmt) {
     );
     if (s) {
         // TODO: Reduce code duplication
+        // About how to scale a canvas: see, for example, http://stackoverflow.com/q/9742131
         var canvas = $('<canvas>')
             .attr('id', 'draw-disp-' + cmt.id)
-            .attr('width', s[0])
-            .attr('height', s[1]);
+            .attr('width', s[0]).attr('height', s[1])
+            .css('width', Math.floor(s[0] * imgDispScale))
+            .css('height', Math.floor(s[1] * imgDispScale));
         $('#cmt-disp-' + cmt.id).prepend(canvas);
         var ctx = canvas[0].getContext('2d');
         var imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
