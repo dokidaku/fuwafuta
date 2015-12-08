@@ -3,6 +3,12 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
+var listenPort = 25252;
+// http://stackoverflow.com/q/4351521/
+if (process.argv.length >= 2) {
+    listenPort = parseInt(process.argv[process.argv.length - 1]);
+}
+
 var passcode = '';
 var hex_random = function () {
     var s = Math.floor(Math.random() * 2147483648).toString(16);
@@ -102,6 +108,6 @@ io.on('connection', function (socket) {
     });
 });
 
-server.listen(25252, function () {
-    console.log('Started at http://*:25252/');
+server.listen(listenPort, function () {
+    console.log('Started at http://*:' + listenPort + '/');
 });
