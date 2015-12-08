@@ -205,3 +205,16 @@ var btnTypeWidth = $('#btn-type-0').height() * 1.2;
 $('#btn-type-0').click(function () { typeChange(0); }).width(btnTypeWidth);
 $('#btn-type-1').click(function () { typeChange(1); }).width(btnTypeWidth);
 $('#btn-type-2').click(function () { typeChange(2); }).width(btnTypeWidth);
+
+var maxSketchWidth = 600;
+window.onresize = function () {
+    var sketchWidth =
+        $('#comment-draw').hasClass('invisible') ?
+        $('#comment-text').width() : $('#comment-draw').width();
+    if (sketchWidth >= maxSketchWidth) sketchWidth = maxSketchWidth;
+    if (sketchWidth != parseInt($('#sketch').attr('width'))) {
+        $('#sketch').attr('width', sketchWidth + 'px');
+    }
+    imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
+};
+window.onresize();
