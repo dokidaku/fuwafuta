@@ -33,6 +33,7 @@ namespace TwoDoubleThree {
             BulletDisp.DefaultFontSize = int.Parse((string)h["Font Size"]);
             DanmakuLayer.LineHeight = int.Parse((string)h["Line Height"]);
             DanmakuLayer.TimerInterval = int.Parse((string)h["Timer Interval"]);
+            DanmakuPool.MaxLayers = int.Parse((string)h["Display Layers"]);
         }
 
         public static void Main() {
