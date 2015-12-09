@@ -100,7 +100,7 @@ io.on('connection', function (socket) {
             console.log(comments[data.id]);
             if (io.sockets.connected[comments[data.id].author])
                 io.sockets.connected[comments[data.id].author].emit('commentAccepted', data);
-            dispSocket.emit('comment', comments[data.id]);
+            if (dispSocket) dispSocket.emit('comment', comments[data.id]);
         }
     });
     socket.on('reject', function (data) {
