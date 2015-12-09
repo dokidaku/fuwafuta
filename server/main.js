@@ -23,7 +23,7 @@ var passcode_regen = function () {
     console.info('Current passcode: ' + passcode);
 };
 passcode_regen();
-var passcodeTimer = setInterval(passcode_regen, 15000);
+var passcodeTimer = setInterval(passcode_regen, 60000);
 
 app.use('/static', express.static(__dirname + '/static'));
 app.get('/admin', function (req, res) {
@@ -49,7 +49,7 @@ io.on('connection', function (socket) {
             console.info('Administrator disconnected!');
             adminSocket = null;
             passcode_regen();
-            passcodeTimer = setInterval(passcode_regen, 15000);
+            passcodeTimer = setInterval(passcode_regen, 60000);
         }
         if (socket.isDisp) {
             console.info('Displayer disconnected!');
