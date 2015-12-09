@@ -43,6 +43,8 @@ namespace TwoDoubleThree {
             this.Location = new Point(0, 0);
             this.BackColor = this.TransparencyKey = BulletDisp.BackgroundColor;
             this.ShowInTaskbar = false;
+            this.TopLevel = true;
+            this.TopMost = true;
         }
 
         private void Timer_Tick(object sender, EventArgs e) {
