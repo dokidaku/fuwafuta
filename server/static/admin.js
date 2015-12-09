@@ -46,6 +46,12 @@ socket.on('verifyResult', function (r) {
     }
 });
 
+var bypass = false;
+$('#btn-bypass').click(function () {
+    bypass = !bypass;
+    $('#btn-bypass').toggleClass('highlight');
+});
+
 var clearDisplay = function (id, isAccepted) {
     $('#reject-ask-' + id).remove();
     $('#comment-li-' + id).addClass(isAccepted ? 'past-accepted' : 'past-rejected');
@@ -150,6 +156,7 @@ socket.on('comment', function (cmt) {
     } else {
         commentQueuePush(cmt);
     }
+    if (bypass) sendAccept(cmt.id);
 });
 
 socket.on('commentReceived', function (cmt) { console.log('Received', cmt); });
