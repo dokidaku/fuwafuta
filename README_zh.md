@@ -68,7 +68,7 @@ TL;DR
 ```bash
 $ cd server
 $ npm install -i
-$ node main.js 8080
+$ node main.js -p 8080
 ```
 
 服务端就这样搞定啦～

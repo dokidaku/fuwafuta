@@ -5,8 +5,11 @@ var io = require('socket.io').listen(server);
 
 var listenPort = 25252;
 // http://stackoverflow.com/q/4351521/
-if (process.argv.length >= 2) {
-    listenPort = parseInt(process.argv[process.argv.length - 1]);
+if (process.argv.length >= 3) {
+    for (var i = 0; i < process.argv.length - 1; ++i) {
+        if (process.argv[i] === '-p')
+            listenPort = parseInt(process.argv[i + 1]);
+    }
 }
 
 var passcode = '';
