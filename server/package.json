@@ -2,6 +2,9 @@
   "name": "twodoublethree",
   "version": "0.0.1",
   "description": "Danmaku can be flying everywhere",
+  "scripts": {
+    "start": "node main.js -p 8080"
+  },
   "dependencies": {
     "express": "^4.10.2",
     "socket.io": "^1.3.7"
