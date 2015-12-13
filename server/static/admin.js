@@ -156,7 +156,9 @@ socket.on('comment', function (cmt) {
     } else {
         commentQueuePush(cmt);
     }
-    if (bypass) sendAccept(cmt.id);
+    console.log(cmt.kwFiltered);
+    if (cmt.kwFiltered) sendReject(cmt.id, cmt.kwReason);
+    else if (bypass) sendAccept(cmt.id);
 });
 
 socket.on('commentReceived', function (cmt) { console.log('Received', cmt); });
