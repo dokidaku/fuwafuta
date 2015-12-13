@@ -104,7 +104,7 @@ Visit our [project site](#) (under construction = =).
 Licences
 ========
 
-[The MIT/Expat License]()
+The MIT/Expat License
 
 Artwork: [CC BY 4.0 International](http://creativecommons.org/licenses/by/4.0/)
 

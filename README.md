@@ -115,8 +115,9 @@ Current passcode: 3db41a8f4ae812c830a9c3035670ff07
 关键词屏蔽
 ==========
 
-嗯……经过思考，这个最好还是放在服务端进行设置……因为……万一孩纸们经过管理员身边的话，就会
-看到一些不好的东西……嗯就是酱紫。
+嗯……经过思考，这个最好还是放在服务端进行设置……
+
+因为……万一孩纸们经过管理员身边的话，就会看到一些不好的东西……嗯就是酱紫。
 
 在服务器 `server` 目录下创建文件 `keywords.txt`，格式如下：
 ```python
@@ -158,5 +159,5 @@ s--t
 
 The MIT/Expat License
 
-Artwork: CC BY International 4.0
+Artwork: [CC BY 4.0 International](http://creativecommons.org/licenses/by/4.0/)
 
