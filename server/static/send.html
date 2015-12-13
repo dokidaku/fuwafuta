@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Client</title>
+    <link href='https://fonts.lug.ustc.edu.cn/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
     <link href='/static/global.css' rel='stylesheet' type='text/css'>
     <link href='/static/send.css' rel='stylesheet' type='text/css'>
   </head>
@@ -16,8 +17,8 @@
     <h2 id='subtitle'>Client</h2>
     <div id='client-main'>
         <button id='btn-type-0' class='small highlight'><i class='fa fa-long-arrow-left'></i></button>
-        <button id='btn-type-1' class='small'><i class='fa fa-level-up'></i></button>
-        <button id='btn-type-2' class='small'><i class='fa fa-level-down'></i></button>
+        <button id='btn-type-1' class='small'><i class='fa fa-sort-amount-asc fa-flip-vertical'></i></button>
+        <button id='btn-type-2' class='small'><i class='fa fa-sort-amount-asc'></i></button>
         <br>
         <button id='btn-toggle-mode' class='small'>
             <i class='fa fa-arrow-right'></i>
@@ -35,8 +36,8 @@
         <div id='comment-draw' class='invisible'>
             <div>
                 <button id='draw-clear' class='small'><i class="fa fa-eraser"></i> Clear</button>
-                <button id='draw-expand' class='small'><i class="fa fa-plus"></i></button>
-                <button id='draw-shrink' class='small'><i class="fa fa-minus"></i></button>
+                <button id='draw-expand' class='small'><i class="fa fa-arrows-v"></i></button>
+                <button id='draw-shrink' class='small'><i class="fa fa-compress"></i></button>
             </div>
             <canvas id='sketch' width='480px' height='54px'></canvas>
             <button id='draw-send'>

@@ -11,8 +11,8 @@ var isDark = function (c) {
 var commenTypeIcon = function (type) {
     switch (type) {
         case 0: return $('<i class="cmt-type-icon fa fa-long-arrow-left"></i>&nbsp;');
-        case 1: return $('<i class="cmt-type-icon fa fa-level-up"></i>&nbsp;');
-        case 2: return $('<i class="cmt-type-icon fa fa-level-down"></i>&nbsp;');
+        case 1: return $('<i class="cmt-type-icon fa fa-sort-amount-asc fa-flip-vertical"></i>&nbsp;');
+        case 2: return $('<i class="cmt-type-icon fa fa-sort-amount-asc"></i>&nbsp;');
         default: return null;
     }
 };

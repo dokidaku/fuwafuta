@@ -12,7 +12,7 @@ button .invisible {
     display: none;
 }
 #btn-toggle-mode {
-    margin: 1em 0px;
+    margin: 0.4em 0px;
 }
 
 #comment-ipt {
