@@ -97,7 +97,10 @@ var askReject = function (id) {
             }; })(id))
         );
     createReasonShortcut(div, id, 'Improper language');
-    createReasonShortcut(div, id, 'Got it, but not on the screen');
+    // For chatting between the audience and the administrator
+    createReasonShortcut(div, id, 'Got it');
+    createReasonShortcut(div, id, 'Too meaningless');
+    createReasonShortcut(div, id, 'Too ♂ meaningful');
     $('#comment-li-' + id).append(div);
 };
 
