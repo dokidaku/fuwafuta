@@ -55,7 +55,7 @@ And get this project's files onto that machine, by `git clone` or FTP or anythin
 
 ```bash
 $ cd server
-$ npm install -i -g
+$ npm install -i
 $ node main.js -p 8080
 ``` 
 …and we're done.

@@ -69,7 +69,7 @@ Server side installation
 
 ```bash
 $ cd server
-$ npm install -i -g
+$ npm install -i
 $ node main.js -p 8080
 ```
 
