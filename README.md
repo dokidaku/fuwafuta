@@ -1,6 +1,6 @@
 ![banner](banner.png)
 
-[English](blob/master/README_en.md)
+[English](README_en.md)
 
 Two Double Three · Connect
 ==========================
@@ -156,7 +156,7 @@ s--t
 开放源代码许可
 ==============
 
-The MIT/X11 License
+The MIT/Expat License
 
 Artwork: CC BY International 4.0
 
