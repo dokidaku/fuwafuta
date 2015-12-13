@@ -167,6 +167,21 @@ $('#sketch').mousemove(function (e) {
 $('#draw-clear').click(function () {
     clearSketch();
 });
+var resizeSketch = function (width, height) {
+    if (width && width != parseInt(canvas.attr('width'))) {
+        canvas.attr('width', width + 'px');
+    }
+    if (height && height != parseInt(canvas.attr('height'))) {
+        canvas.attr('height', height + 'px');
+    }
+    imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
+}
+$('#draw-expand').click(function () {
+    resizeSketch(null, parseInt(canvas.attr('height')) + 10);
+});
+$('#draw-shrink').click(function () {
+    resizeSketch(null, parseInt(canvas.attr('height')) - 10);
+});
 $('#draw-send').click(function () {
     $('#draw-send-spinner').removeClass('invisible');
     socket.emit('comment', {
@@ -211,13 +226,10 @@ $('#btn-type-2').click(function () { typeChange(2); }).width(btnTypeWidth);
 
 var maxSketchWidth = 600;
 window.onresize = function () {
-    var sketchWidth =
+    var w =
         $('#comment-draw').hasClass('invisible') ?
         $('#comment-text').width() : $('#comment-draw').width();
-    if (sketchWidth >= maxSketchWidth) sketchWidth = maxSketchWidth;
-    if (sketchWidth != parseInt($('#sketch').attr('width'))) {
-        $('#sketch').attr('width', sketchWidth + 'px');
-    }
-    imgdat = ctx.getImageData(0, 0, canvas[0].width, canvas[0].height);
+    if (w >= maxSketchWidth) w = maxSketchWidth;
+    resizeSketch(w, null);
 };
 window.onresize();

@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Client</title>
-    <link href='https://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
     <link href='/static/global.css' rel='stylesheet' type='text/css'>
     <link href='/static/send.css' rel='stylesheet' type='text/css'>
   </head>
@@ -36,6 +35,8 @@
         <div id='comment-draw' class='invisible'>
             <div>
                 <button id='draw-clear' class='small'><i class="fa fa-eraser"></i> Clear</button>
+                <button id='draw-expand' class='small'><i class="fa fa-plus"></i></button>
+                <button id='draw-shrink' class='small'><i class="fa fa-minus"></i></button>
             </div>
             <canvas id='sketch' width='480px' height='54px'></canvas>
             <button id='draw-send'>

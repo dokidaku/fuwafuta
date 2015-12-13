@@ -35,6 +35,7 @@
     <Compile Include="DanmakuLayer.cs" />
     <Compile Include="TestForm.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Assistant.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />

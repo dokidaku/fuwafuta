@@ -70,7 +70,7 @@ namespace TwoDoubleThree {
             return random.NextDouble() * (h - l) + l;
         }
 
-        protected virtual bool AllocateSpace(ref BulletInfo bif) {
+        protected virtual bool AllocateSpace(ref BulletInfo bif, int lines) {
             Console.WriteLine("WARNING: This DanmakuLayer base class should not be used; use TopSlideDanmakuLayer etc. instead.");
             bif.xStartPos = 0;
             bif.xSpeed = 0;
@@ -84,7 +84,7 @@ namespace TwoDoubleThree {
             bif.id = ++lastID;
             bif.bullet = BulletDisp.Fire(text, color, 0, 0);
             this.Controls.Add(bif.bullet);
-            if (!this.AllocateSpace(ref bif)) {
+            if (!this.AllocateSpace(ref bif, Assistant.GetNumLines(text))) {
                 this.Controls.Remove(bif.bullet);
                 bif.bullet.Dispose();
                 return false;
@@ -128,20 +128,32 @@ namespace TwoDoubleThree {
             }
         }
 
-        protected int GetAvailableRow(long blockTime, long borderTouchTime, long disappearTime) {
+        protected int GetAvailableRow(long blockTime, long borderTouchTime, long disappearTime, int lines) {
             long now = DateTime.Now.Ticks;
-            int i = 0;
-            for (; i < MaxRows; ++i) {
+            int i = 0, j;
+            for (; i <= MaxRows - lines; ++i) {
                 if (nextUnblockTime[i] <= now && nextEmptyTime[i] <= borderTouchTime) {
-                    nextUnblockTime[i] = blockTime;
-                    nextEmptyTime[i] = disappearTime;
-                    return i;
+                    bool flag = true;
+                    for (j = i; j < i + lines; ++j) {
+                        if (nextUnblockTime[j] > now || nextEmptyTime[j] > borderTouchTime) {
+                            flag = false; break;
+                        }
+                    }
+                    if (flag) {
+                        for (j = i; j < i + lines; ++j) {
+                            nextUnblockTime[j] = blockTime;
+                            nextEmptyTime[j] = disappearTime;
+                        }
+                        return i;
+                    } else {
+                        i = j;
+                    }
                 }
             }
             return -1;
         }
 
-        protected override bool AllocateSpace(ref BulletInfo bif) {
+        protected override bool AllocateSpace(ref BulletInfo bif, int lines) {
             double w = SystemInformation.WorkingArea.Size.Width;
             double xSpeed = -w / randomBetween(SlidingMinDuration, SlidingMaxDuration);
             bif.xStartPos = w;
@@ -150,7 +162,7 @@ namespace TwoDoubleThree {
             bif.finishTime = DateTime.Now.AddSeconds((w + bif.bullet.Width) / -xSpeed).Ticks;
             long blockUntil = DateTime.Now.AddSeconds(bif.bullet.Width / -xSpeed).Ticks;
             long borderTouchTime = DateTime.Now.AddSeconds(w / -xSpeed).Ticks;
-            int row = GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime);
+            int row = GetAvailableRow(blockUntil, borderTouchTime, bif.finishTime, lines);
             if (row == -1) return false;
             double y = YOffset + LineHeight * row;
             bif.bullet.Location = new Point((int)w, (int)y);
@@ -171,24 +183,37 @@ namespace TwoDoubleThree {
             }
         }
 
-        protected int GetAvailableRow(long disappearTime) {
+        protected int GetAvailableRow(long disappearTime, int lines) {
             long now = DateTime.Now.Ticks;
-            for (int i = 0; i < MaxRows; ++i) {
+            int i, j;
+            for (i = 0; i <= MaxRows - lines; ++i) {
                 if (nextEmptyTime[i] <= now) {
-                    nextEmptyTime[i] = disappearTime;
-                    return i;
+                    bool flag = true;
+                    for (j = i; j < i + lines; ++j) {
+                        if (nextEmptyTime[j] > now) {
+                            flag = false; break;
+                        }
+                    }
+                    if (flag) {
+                        for (j = i; j < i + lines; ++j) {
+                            nextEmptyTime[j] = disappearTime;
+                        }
+                        return i;
+                    } else {
+                        i = j;
+                    }
                 }
             }
             return -1;
         }
 
-        protected override bool AllocateSpace(ref BulletInfo bif) {
+        protected override bool AllocateSpace(ref BulletInfo bif, int lines) {
             double w = SystemInformation.WorkingArea.Size.Width;
             bif.xStartPos = (w - bif.bullet.Width) / 2;
             bif.xSpeed = 0;
             bif.startTime = DateTime.Now.Ticks;
             bif.finishTime = DateTime.Now.AddSeconds(StickDuration).Ticks;
-            int row = GetAvailableRow(bif.finishTime);
+            int row = GetAvailableRow(bif.finishTime, lines);
             if (row == -1) return false;
             double y = YOffset + LineHeight * row;
             bif.bullet.Location = new Point((int)w, (int)y);
@@ -197,8 +222,8 @@ namespace TwoDoubleThree {
     }
 
     public class BottomStickDanmakuLayer : TopStickDanmakuLayer {
-        protected override bool AllocateSpace(ref BulletInfo bif) {
-            if (!base.AllocateSpace(ref bif)) return false;
+        protected override bool AllocateSpace(ref BulletInfo bif, int lines) {
+            if (!base.AllocateSpace(ref bif, lines)) return false;
             double h = SystemInformation.WorkingArea.Size.Height;
             bif.bullet.Location =
                 new Point(bif.bullet.Location.X, (int)(h - LineHeight + YOffset - bif.bullet.Location.Y));
