@@ -1,3 +1,14 @@
+:warning: Announcement
+============
+
+暂缓填坑。2016年1月起开始增加新内容。
+============
+
+
+
+
+
+
 ![banner](banner.png)
 
 [English](README_en.md)
