@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/dokidaku/fuwafuta#readme",
   "dependencies": {
-    "koa": "^1.2.0"
+    "koa": "^2.0.0"
   }
 }
