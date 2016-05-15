@@ -1,14 +1,14 @@
-var Koa = require('koa');
-var app = new Koa();
+const Koa = require('koa');
+const app = new Koa();
 
-app.use(function* (next) {
-    var start = Date.now();
-    yield next;
-    console.log('%s %s - %s', this.method, this.url, Date.now() - start);
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next;
+    console.log('%s %s - %s', ctx.method, ctx.url, Date.now() - start);
 });
 
-app.use(function* () {
-    this.body = 'Hello world!';
+app.use(ctx => {
+    ctx.body = 'Hello world!';
 });
 
 app.listen(2233);
