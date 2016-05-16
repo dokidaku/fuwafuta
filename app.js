@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
 
+/*
 const redis = require('redis'),
     client = redis.createClient();
 
@@ -23,6 +24,8 @@ io.on('connection', (ctx, data) => {
 io.on('poke', (ctx, data) => {
     console.log('Giggle.', data);
 });
+
+*/
 
 app.use(async (ctx, next) => {
     const start = Date.now();
