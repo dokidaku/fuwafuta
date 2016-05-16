@@ -4,7 +4,9 @@ const app = new Koa();
 app.use(async (ctx, next) => {
     const start = Date.now();
     await next();
-    console.log('%s %s - %s', ctx.method, ctx.url, Date.now() - start);
+    console.log('%s %s [%d, %s ms]',
+        ctx.method, ctx.url,
+        ctx.status, Date.now() - start);
 });
 
 app.use(ctx => {
@@ -12,4 +14,5 @@ app.use(ctx => {
 });
 
 app.listen(2233);
+console.log('Up at http://127.0.0.1:2233/ (/=w=)~');
 
