@@ -6,12 +6,22 @@ const redis = require('redis'),
     client = redis.createClient();
 
 const IO = require('koa-socket');
-const io = new IO();
+const io = new IO();*/
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/fuwa');
 
-client.set('string__key', 'string value');
+const Cat = require('./models/cat');
+const c = new Cat({ name: 'Nuko' });
+c.save(function (err) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('NYANPASU-');
+    }
+});
+
+/*client.set('string__key', 'string value');
 client.get('string__key', (err, reply) => { console.log(reply); });
 client.hset('hash__key', 'field one', 'value one');
 client.hset('hash__key', 'field two', 'value two');
