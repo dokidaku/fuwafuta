@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>- -||</title>
+  </head>
+  <body>
+    <script src='/static/socket.io-1.6.0.min.js'></script>
+    <script>
+      var socket = io('http://localhost:6034/');
+      socket.on('unauthorized', function () {
+        //window.alert('Please refresh the page')
+        window.location.href = window.location.href;
+      });
+    </script>
+  </body>
+</html>
