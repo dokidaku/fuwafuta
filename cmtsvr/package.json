@@ -1,0 +1,22 @@
+{
+  "name": "fuwafuta-cmtsvr",
+  "version": "0.97.1",
+  "description": "Yet another instant commenting system, focusing on live performances",
+  "main": "app.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dokidaku/fuwafuta.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dokidaku/fuwafuta/issues"
+  },
+  "homepage": "https://github.com/dokidaku/fuwafuta#readme",
+  "dependencies": {
+  }
+}
