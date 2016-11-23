@@ -4,12 +4,20 @@
     <title>- -||</title>
   </head>
   <body>
+    <input id='txt-cmt'></input>
+    <button id='btn-send'>\(//∇//)\</button>
+
     <script src='/static/socket.io-1.6.0.min.js'></script>
     <script>
       var socket = io('http://localhost:6034/');
       socket.on('unauthorized', function () {
         //window.alert('Please refresh the page')
         window.location.href = window.location.href;
+      });
+
+      document.getElementById('btn-send').addEventListener('click', function (e) {
+        socket.emit('pop', document.getElementById('txt-cmt').value, '#000000;t');
+        document.getElementById('txt-cmt').value = '';
       });
     </script>
   </body>
