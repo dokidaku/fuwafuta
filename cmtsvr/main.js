@@ -16,13 +16,13 @@ const uuid = require('uuid')
 
 const checkCookies = (ctx, next) => {
   const refreshCookies = () => {
-    var auth = uuid()
-    redis.sadd('auths', auth)
-    ctx.cookies.set('auth', auth, { expires: new Date(Date.now() + 1000 * 5) })
+    var id = uuid()
+    redis.hmset('client:' + id, 'created', Date.now(), 'role', 0)
+    ctx.cookies.set('auth', id, { expires: new Date(Date.now() + 1000 * 5) })
   }
   var cookie_auth = ctx.cookies.get('auth')
   if (!cookie_auth) refreshCookies()
-  else redis.sismember('auths', cookie_auth).then((is_authorized) => {
+  else redis.exists('client:' + cookie_auth).then((is_authorized) => {
     if (!is_authorized) refreshCookies()
   })
   return next()
@@ -44,7 +44,7 @@ app.use(router.middleware())
 
 io.on('connection', (socket) => {
   var auth_id = cookie.parse(socket.handshake.headers.cookie)
-  redis.sismember('auths', auth_id.auth).then((is_authorized) => {
+  redis.exists('client:' + auth_id.auth).then((is_authorized) => {
     if (!is_authorized) {
       socket.emit('unauthorized')
       socket.disconnect(true)
