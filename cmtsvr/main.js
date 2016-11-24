@@ -77,6 +77,13 @@ const logoutClient = async (uid) => {
   redis.srem('group:' + prev_role, uid)
 }
 
+const logoutAllClients = () => {
+  const transaction = redis.multi()
+  for (var i = 0; i < role_cfg.ROLES_CT; ++i) transaction.del('group:' + i)
+  transaction.exec()
+}
+logoutAllClients()
+
 const checkCookies = (role) => async (ctx, next) => {
   const refreshCookies = () => {
     var new_uid = createClient()
