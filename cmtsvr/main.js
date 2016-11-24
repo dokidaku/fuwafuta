@@ -27,6 +27,16 @@ const redis = new Redis()
 const cookie = require('cookie')
 const uuid = require('uuid')
 
+const notifyAll = async (priv, obj, event) => {
+  var notifylist = []
+  for (var i = 0; i < role_cfg.ROLES_CT; ++i) if (role_cfg[i] & role_priv.UNFILTERED) {
+    notifylist = notifylist.concat(await redis.smembers('group:' + i))
+  }
+  for (var i = 0; i < notifylist.length; ++i) {
+    sockets[sidmap[notifylist[i]]].emit(event || 'comment', obj)
+  }
+}
+
 const createComment = async (uid, text, attr) => {
   // Add to the database
   console.log(`From ${uid}: ${text} / ${attr}`)
@@ -41,14 +51,16 @@ const createComment = async (uid, text, attr) => {
     transaction.sadd.apply(transaction, ['cmtjury:' + cid].concat(jury))
   }
   transaction.exec()
+  notifyAll(role_priv.UNFILTERED, { id: cid, state: role_priv.UNFILTERED, text: text, attr: attr })
+}
 
-  // Notify who may concern
-  var notifylist = []
-  for (var i = 0; i < role_cfg.ROLES_CT; ++i) if (role_cfg[i] & role_priv.UNFILTERED) {
-    notifylist = notifylist.concat(await redis.smembers('group:' + i))
-  }
-  for (var i = 0; i < notifylist.length; ++i) {
-    sockets[sidmap[notifylist[i]]].emit('comment', { state: role_priv.UNFILTERED, text: text, attr: attr })
+const scoreComment = async (cid, uid, score) => {
+  if (await redis.srem('cmtjury:' + cid, uid) < 1) return
+  const new_score = await redis.hincrby('cmt:' + cid, 'score', score)
+  if (await redis.scard('cmtjury:' + cid) == 0) {
+    if (new_score >= 0) {
+      notifyAll(role_priv.APPROVED, { id: cid, state: role_priv.APPROVED, text: text, attr: attr })
+    }
   }
 }
 
@@ -163,6 +175,12 @@ io.on('connection', async (socket) => {
 
   socket.on('pop', ((_socket) => (text, attr) => {
     createComment(_socket.uid, text, attr)
+  })(socket))
+  socket.on('approve', ((_socket) => (cid) => {
+    scoreComment(cid, _socket.uid, +1)
+  })(socket))
+  socket.on('overrule', ((_socket) => (cid) => {
+    scoreComment(cid, _socket.uid, -1)
   })(socket))
 })
 
