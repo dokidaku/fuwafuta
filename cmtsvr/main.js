@@ -2,6 +2,7 @@ const Koa = require('koa')
 const app = new Koa()
 
 const send = require('koa-send')
+const bodyParser = require('koa-body')()
 
 const Router = require('koa-better-router')
 const router = new Router().loadMethods()
@@ -71,11 +72,11 @@ const scoreComment = async (cid, uid, score) => {
   }
 }
 
-const createClient = () => {
-  var new_uid = uuid()
-  redis.hmset('client:' + new_uid, 'created', Date.now(), 'role', role_cfg.HTML_RESTRAINED)
+const createClientWithID = (new_uid, role) => {
+  redis.hmset('client:' + new_uid, 'created', Date.now(), 'role', role == null ? role_cfg.IGNORANT : role)
   return new_uid
 }
+const createClient = (role) => createClientWithID(uuid(), role)
 
 const loginClient = async (uid) => {
   const prev_role = await redis.hget('client:' + uid, 'role')
@@ -84,7 +85,7 @@ const loginClient = async (uid) => {
 
 const reassignClient = async (uid, new_role) => {
   const prev_role = await redis.hget('client:' + uid, 'role')
-  redis.multi()
+  await redis.multi()
     .hset('client:' + uid, 'role', new_role)
     .srem('group:' + prev_role, uid)
     .sadd('group:' + new_role, uid)
@@ -105,7 +106,7 @@ logoutAllClients()
 
 const checkCookies = (_role) => async (ctx, next) => {
   const refreshCookies = () => {
-    var new_uid = createClient()
+    var new_uid = createClient(role_cfg.HTML_RESTRAINED)
     ctx.cookies.set('auth', new_uid, { expires: new Date(Date.now() + 1000 * 3600) })
     return new_uid
   }
@@ -124,7 +125,11 @@ const checkCookies = (_role) => async (ctx, next) => {
 }
 
 const clientID = (ctx) => {
-  return ctx.cookies.get('auth')
+  if (ctx.method.toUpperCase() === 'POST' && ctx.request.body.uid_sub != null) {
+    return ctx.cookies.get('auth') + '-' + ctx.request.body.uid_sub
+  } else {
+    return ctx.cookies.get('auth')
+  }
 }
 
 router.get('/', ctx => {
@@ -147,7 +152,7 @@ router.get('/:html([A-Za-z0-9_-]+\\.html)',
 router.get('/set_filtration/:is_restrained([01])',
   checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]),
   async (ctx, next) => {
-    reassignClient(clientID(ctx), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
+    await reassignClient(clientID(ctx), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
     ctx.body = 'Success ♪( ´▽｀)'
     return next()
   }
@@ -162,6 +167,20 @@ router.get('/verify/:pass([A-Za-z0-9_-]+)', checkCookies(null), async (ctx, next
     ctx.body = 'No changes -_-#'
   }
   return next()
+})
+
+router.post('/new_client', checkCookies(role_cfg.IMSERVER), bodyParser, async (ctx, next) => {
+  const reqbody = ctx.request.body
+  if (reqbody.uid_sub == null) return ctx.status = 400
+  createClientWithID(clientID(ctx))
+  ctx.body = 'Success ♪( ´▽｀)'
+})
+
+router.post('/new_comment', checkCookies(role_cfg.IMSERVER), bodyParser, async (ctx, next) => {
+  const reqbody = ctx.request.body
+  if (reqbody.uid_sub == null || reqbody.text == null || reqbody.attr == null) return ctx.status = 400
+  await createComment(clientID(ctx), reqbody.text, reqbody.attr)
+  ctx.body = 'Success ♪( ´▽｀)'
 })
 
 app.use(router.middleware())
