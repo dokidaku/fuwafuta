@@ -29,8 +29,8 @@ const uuid = require('uuid')
 
 const notifyAll = async (priv, obj, event) => {
   var notifylist = []
-  for (var i = 0; i < role_cfg.ROLES_CT; ++i) if (role_cfg[i] & role_priv.UNFILTERED) {
-    notifylist = notifylist.concat(await redis.smembers('group:' + i))
+  for (var i = 0; i < role_cfg.ROLES_CT; ++i) if (role_cfg[i] & priv) {
+    notifylist = notifylist.concat((await redis.smembers('group:' + i)) || [])
   }
   for (var i = 0; i < notifylist.length; ++i) {
     sockets[sidmap[notifylist[i]]].emit(event || 'comment', obj)
@@ -51,7 +51,7 @@ const createComment = async (uid, text, attr) => {
     transaction.sadd.apply(transaction, ['cmtjury:' + cid].concat(jury))
   }
   transaction.exec()
-  notifyAll(role_priv.UNFILTERED, { id: cid, state: role_priv.UNFILTERED, text: text, attr: attr })
+  await notifyAll(role_priv.UNFILTERED, { id: cid, state: role_priv.UNFILTERED, text: text, attr: attr })
 }
 
 const scoreComment = async (cid, uid, score) => {
@@ -59,7 +59,8 @@ const scoreComment = async (cid, uid, score) => {
   const new_score = await redis.hincrby('cmt:' + cid, 'score', score)
   if (await redis.scard('cmtjury:' + cid) == 0) {
     if (new_score >= 0) {
-      notifyAll(role_priv.APPROVED, { id: cid, state: role_priv.APPROVED, text: text, attr: attr })
+      const cmt = await redis.hmget('cmt:' + cid, 'text', 'attr')
+      await notifyAll(role_priv.APPROVED, { id: cid, state: role_priv.APPROVED, text: cmt[0], attr: cmt[1] })
     }
   }
 }
@@ -108,7 +109,7 @@ const checkCookies = (role) => async (ctx, next) => {
     const is_authorized = await redis.exists('client:' + uid)
     if (!is_authorized) refreshCookies()
   }
-  if (typeof role === 'function') role = role(ctx.params.html || '') || role_cfg.IGNORANT
+  if (typeof role === 'function') role = role(ctx.params.html || '')
   if (role != role_cfg.IGNORANT) await reassignClient(uid, role)
   return next()
 }
@@ -123,7 +124,7 @@ router.get('/static/:file', async (ctx, next) => {
 })
 
 router.get('/:html([A-Za-z0-9_-]+\\.html)',
-  checkCookies((e) => e === 'monitor.html' ? role_cfg.MODERATOR : role_cfg.HTML_FREESTYLE),
+  checkCookies((e) => e === 'monitor.html' ? role_cfg.MODERATOR : role_cfg.HTML_RESTRAINED),
   async (ctx, next) => {
     await send(ctx, ctx.params.html, { root: __dirname + '/static' })
     next()

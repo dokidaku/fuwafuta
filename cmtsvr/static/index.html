@@ -6,6 +6,7 @@
   <body>
     <input id='txt-cmt'></input>
     <button id='btn-send'>\(//∇//)\</button>
+    <ul id='list'></ul>
 
     <script src='/static/socket.io-1.6.0.min.js'></script>
     <script>
@@ -18,6 +19,13 @@
       document.getElementById('btn-send').addEventListener('click', function (e) {
         socket.emit('pop', document.getElementById('txt-cmt').value, '#000000;t');
         document.getElementById('txt-cmt').value = '';
+      });
+
+      socket.on('comment', function (c) {
+        var li = document.createElement('li');
+        li.id = 'item-' + c.id;
+        li.innerHTML = c.text + ' | <small>' + c.attr + '</small>';
+        document.getElementById('list').appendChild(li);
       });
     </script>
   </body>

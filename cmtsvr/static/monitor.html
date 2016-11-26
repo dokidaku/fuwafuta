@@ -21,14 +21,15 @@
         li.innerHTML += '<button id="btn-approve-' + c.id + '">√</button>';
         li.innerHTML += '<button id="btn-overrule-' + c.id + '">(´Д` )</button>';
         document.getElementById('list').appendChild(li);
-        document.getElementById('btn-approve-' + c.id).addEventListener('click', function (e) {
-          socket.emit('approve', c.id);
-          document.getElementById('item-' + c.id).remove(true);
-        });
-        document.getElementById('btn-overrule-' + c.id).addEventListener('click', function (e) {
-          socket.emit('overrule', c.id);
-          document.getElementById('item-' + c.id).remove(true);
-        });
+        document.getElementById('btn-approve-' + c.id).addEventListener('click', (function (_id) { return function (e) {
+          socket.emit('approve', _id);
+          console.log(_id);
+          document.getElementById('item-' + _id).remove(true);
+        }; })(c.id));
+        document.getElementById('btn-overrule-' + c.id).addEventListener('click', (function (_id) { return function (e) {
+          socket.emit('overrule', _id);
+          document.getElementById('item-' + _id).remove(true);
+        }; })(c.id));
       });
     </script>
   </body>
