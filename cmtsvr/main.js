@@ -138,19 +138,24 @@ router.get('/', ctx => {
 
 router.get('/static/:file', async (ctx, next) => {
   await send(ctx, ctx.params.file, { root: __dirname + '/static' })
-  next()
+  return next()
 })
 
 router.get('/:html([A-Za-z0-9_-]+\\.html)',
   checkCookies((e) => e === 'monitor.html' ? role_cfg.MODERATOR : null),
   async (ctx, next) => {
     await send(ctx, ctx.params.html, { root: __dirname + '/static' })
-    next()
+    return next()
   }
 )
 
-router.get('/set_filtration/:is_restrained([01])',
-  checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]),
+router.get('/get_filtration', checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]), async (ctx, next) => {
+  ctx.body = (await redis.hget('client:' + clientID(ctx), 'role')) == role_cfg.HTML_RESTRAINED ? '1' : '0'
+  return next()
+})
+
+router.post('/set_filtration/:is_restrained([01])',
+  checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]), bodyParser,
   async (ctx, next) => {
     await reassignClient(clientID(ctx), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
     ctx.body = 'Success ♪( ´▽｀)'
@@ -158,8 +163,8 @@ router.get('/set_filtration/:is_restrained([01])',
   }
 )
 
-router.get('/verify/:pass([A-Za-z0-9_-]+)', checkCookies(null), async (ctx, next) => {
-  const new_role = pass_cfg[ctx.params.pass]
+router.post('/verify', checkCookies(null), bodyParser, async (ctx, next) => {
+  const new_role = pass_cfg[ctx.request.body.pass]
   if (new_role != null) {
     await reassignClient(clientID(ctx), new_role)
     ctx.body = 'Success ♪( ´▽｀)'

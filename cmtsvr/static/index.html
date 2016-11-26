@@ -6,10 +6,17 @@
   <body>
     <input id='txt-cmt'></input>
     <button id='btn-send'>\(//∇//)\</button>
+    <button id='btn-filtration-0' class='hidden'>Receiving FILTERED updates</button>
+    <button id='btn-filtration-1' class='hidden'>Receiving UNFILTERED updates</button>
     <ul id='list'></ul>
+    <style> .hidden { display: none; } </style>
 
     <script src='/static/socket.io-1.6.0.min.js'></script>
     <script>
+      var createXHR;
+      if (window.XMLHttpRequest) createXHR = function () { return new XMLHttpRequest(); };
+      else createXHR = function () { return new ActiveXObject('Microsoft.XMLHTTP'); };
+
       var socket = io('http://localhost:6034/');
       socket.on('unauthorized', function () {
         //window.alert('Please refresh the page')
@@ -20,6 +27,32 @@
         socket.emit('pop', document.getElementById('txt-cmt').value, '#000000;t');
         document.getElementById('txt-cmt').value = '';
       });
+
+      document.addEventListener('DOMContentLoaded', function (e) {
+        var xhr = createXHR();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var idx = parseInt(xhr.responseText);
+            document.getElementById('btn-filtration-' + (1 - idx).toString()).classList.remove('hidden');
+          }
+        }
+        xhr.open('GET', '/get_filtration', true);
+        xhr.send();
+      });
+
+      for (var i = 0; i <= 1; ++i) {
+        document.getElementById('btn-filtration-' + i.toString()).addEventListener('click', (function (_i) { return function (e) {
+          document.getElementById('btn-filtration-' + _i.toString()).classList.add('hidden');
+          var xhr = createXHR();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              document.getElementById('btn-filtration-' + (1 - _i).toString()).classList.remove('hidden');
+            }
+          }
+          xhr.open('POST', '/set_filtration/' + _i.toString(), true);
+          xhr.send();
+        }; })(i));
+      }
 
       socket.on('comment', function (c) {
         var li = document.createElement('li');
