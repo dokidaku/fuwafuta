@@ -97,7 +97,7 @@ const logoutAllClients = () => {
 }
 logoutAllClients()
 
-const checkCookies = (role) => async (ctx, next) => {
+const checkCookies = (_role) => async (ctx, next) => {
   const refreshCookies = () => {
     var new_uid = createClient()
     ctx.cookies.set('auth', new_uid, { expires: new Date(Date.now() + 1000 * 3600) })
@@ -109,8 +109,11 @@ const checkCookies = (role) => async (ctx, next) => {
     const is_authorized = await redis.exists('client:' + uid)
     if (!is_authorized) refreshCookies()
   }
-  if (typeof role === 'function') role = role(ctx.params.html || '')
-  if (role != role_cfg.IGNORANT) await reassignClient(uid, role)
+  var role = (typeof _role === 'function') ? _role(ctx.params.html || '') : _role
+  if (role != null && !(role instanceof Array)) role = [role]
+  if (role != null && role.indexOf(parseInt(await redis.hget('client:' + uid, 'role'))) === -1) {
+    return ctx.status = 403
+  }
   return next()
 }
 
@@ -124,22 +127,25 @@ router.get('/static/:file', async (ctx, next) => {
 })
 
 router.get('/:html([A-Za-z0-9_-]+\\.html)',
-  checkCookies((e) => e === 'monitor.html' ? role_cfg.MODERATOR : role_cfg.HTML_RESTRAINED),
+  checkCookies((e) => e === 'monitor.html' ? role_cfg.MODERATOR : null),
   async (ctx, next) => {
     await send(ctx, ctx.params.html, { root: __dirname + '/static' })
     next()
   }
 )
 
-router.get('/reassign_1234567/:uid([a-z0-9-]+)/:new_role(\\d+)', async (ctx, next) => {
-  await reassignClient(ctx.params.uid, ctx.params.new_role)
-  ctx.body = 'Success ♪( ´▽｀)'
-  return next()
-})
+router.get('/set_filtration/:is_restrained([01])',
+  checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]),
+  async (ctx, next) => {
+    reassignClient(ctx.cookies.get('auth'), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
+    ctx.body = 'Success ♪( ´▽｀)'
+    return next()
+  }
+)
 
 app.use(router.middleware())
 
-router.get('/my', checkCookies(role_cfg.IGNORANT), async (ctx, next) => {
+router.get('/my', checkCookies(null), async (ctx, next) => {
   var uid = ctx.cookies.get('auth')
   const cidlist = await redis.lrange('cmtby:' + uid, 0, 4)
   const ops1 = cidlist.map((cid) => ['hmget', 'cmt:' + cid, 'text', 'score'])
