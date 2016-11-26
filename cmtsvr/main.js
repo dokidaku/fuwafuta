@@ -27,6 +27,12 @@ const redis = new Redis()
 const cookie = require('cookie')
 const uuid = require('uuid')
 
+const pass_cfg = {
+  'nodnod985661441': role_cfg.MODERATOR,
+  'uojuoj998244353': role_cfg.DISPLAY,
+  'cfcf1000000007': role_cfg.IMSERVER
+}
+
 const notifyAll = async (priv, obj, event) => {
   var notifylist = []
   for (var i = 0; i < role_cfg.ROLES_CT; ++i) if (role_cfg[i] & priv) {
@@ -67,7 +73,7 @@ const scoreComment = async (cid, uid, score) => {
 
 const createClient = () => {
   var new_uid = uuid()
-  redis.hmset('client:' + new_uid, 'created', Date.now(), 'role', role_cfg.IGNORANT)
+  redis.hmset('client:' + new_uid, 'created', Date.now(), 'role', role_cfg.HTML_RESTRAINED)
   return new_uid
 }
 
@@ -146,6 +152,17 @@ router.get('/set_filtration/:is_restrained([01])',
     return next()
   }
 )
+
+router.get('/verify/:pass([A-Za-z0-9_-]+)', checkCookies(null), async (ctx, next) => {
+  const new_role = pass_cfg[ctx.params.pass]
+  if (new_role != null) {
+    await reassignClient(clientID(ctx), new_role)
+    ctx.body = 'Success ♪( ´▽｀)'
+  } else {
+    ctx.body = 'No changes -_-#'
+  }
+  return next()
+})
 
 app.use(router.middleware())
 
