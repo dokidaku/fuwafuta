@@ -117,6 +117,10 @@ const checkCookies = (_role) => async (ctx, next) => {
   return next()
 }
 
+const clientID = (ctx) => {
+  return ctx.cookies.get('auth')
+}
+
 router.get('/', ctx => {
   ctx.redirect('/index.html')
 })
@@ -137,7 +141,7 @@ router.get('/:html([A-Za-z0-9_-]+\\.html)',
 router.get('/set_filtration/:is_restrained([01])',
   checkCookies([role_cfg.HTML_FREESTYLE, role_cfg.HTML_RESTRAINED]),
   async (ctx, next) => {
-    reassignClient(ctx.cookies.get('auth'), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
+    reassignClient(clientID(ctx), parseInt(ctx.params.is_restrained) ? role_cfg.HTML_RESTRAINED : role_cfg.HTML_FREESTYLE)
     ctx.body = 'Success ♪( ´▽｀)'
     return next()
   }
@@ -146,7 +150,7 @@ router.get('/set_filtration/:is_restrained([01])',
 app.use(router.middleware())
 
 router.get('/my', checkCookies(null), async (ctx, next) => {
-  var uid = ctx.cookies.get('auth')
+  var uid = clientID(ctx)
   const cidlist = await redis.lrange('cmtby:' + uid, 0, 4)
   const ops1 = cidlist.map((cid) => ['hmget', 'cmt:' + cid, 'text', 'score'])
   const ops2 = cidlist.map((cid) => ['scard', 'cmtjury:' + cid])
