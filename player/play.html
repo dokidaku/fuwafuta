@@ -22,11 +22,42 @@
       button.vjs-button.vjs-icon-circle-inner-circle {
         background: #333;
       }
-      button.vjs-icon-subtitles.enabled {
-        background: inherit;
+      .vjs-icon-subtitles .vjs-menu {
+        width: 18em;
+        left: unset;
+        right: -3em;
       }
-      button.vjs-icon-subtitles.disabled {
-        background: inherit;
+      .vjs-icon-subtitles .vjs-menu-object {
+        width: 50%;
+        display: inline-block;
+        line-height: 1.6em;
+        height: 1.6em;
+      }
+      .vjs-control.vjs-cmtctrlpanel {
+        width: 100%;
+        height: 100%;
+        padding: 0.6em;
+        cursor: default;
+        font-size: 1.5em;
+        height: auto;
+      }
+      .vjs-toggle-btn.on {
+        background: #19c;
+      }
+      .vjs-toggle-btn.on::after {
+        content: 'ON';
+      }
+      .vjs-toggle-btn.off {
+        background: #444;
+      }
+      .vjs-toggle-btn.off::after {
+        content: 'OFF';
+      }
+      .vjs-toggle-btn.vjs-toggle-btn-filtr.on::after {
+        content: 'FILTERED';
+      }
+      .vjs-toggle-btn.vjs-toggle-btn-filtr.off::after {
+        content: 'RAW';
       }
     </style>
   </head>
