@@ -4,6 +4,22 @@
     <meta charset='utf-8'>
     <title>- -||</title>
     <link href='http://vjs.zencdn.net/5.12.6/video-js.css' rel='stylesheet'>
+    <style>
+      .vjs-cmtinput {
+        font-family: monospace;
+        display: inline-block;
+        width: 100%; height: 95%;
+        margin: 2.5% 0; padding: 0;
+        background: #333;
+        color: white;
+        border: 2px transparent solid;
+        border-left: 2px #666 solid;
+        padding: 0 0.5em;
+      }
+      .vjs-cmtinput:focus {
+        border: 2px #2af solid;
+      }
+    </style>
   </head>
   <body>
     <video id='player' class='video-js' controls width='960' height='480'>
@@ -13,8 +29,12 @@
 
     <script src='http://vjs.zencdn.net/5.12.6/video.js'></script>
     <script src='https://npmcdn.com/videojs-contrib-hls@^3.0.0/dist/videojs-contrib-hls.js'></script>
+    <script src='commenting.js'></script>
     <script>
-      (function (window, videojs) { window.player = videojs('player'); }(window, window.videojs));
+      (function (window, videojs) {
+        videojs.plugin('commentingPlugin', commentingPlugin);
+        window.player = videojs('player', { plugins: { commentingPlugin: { } } });
+      }(window, window.videojs));
     </script>
   </body>
 </html>
