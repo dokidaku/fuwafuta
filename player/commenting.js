@@ -28,7 +28,7 @@ var CommentCtrlPanel = function (_Component) {
     btnTop.el().className += ' vjs-menu-object vjs-toggle-btn on';
     grpTop.appendChild(btnTop.el());
     el.appendChild(grpTop);
-    
+
     var grpBottom = document.createElement('div');
     var txtBottom = document.createElement('div');
     txtBottom.className += ' vjs-menu-object';
@@ -38,7 +38,7 @@ var CommentCtrlPanel = function (_Component) {
     btnBottom.el().className += ' vjs-menu-object vjs-toggle-btn off';
     grpBottom.appendChild(btnBottom.el());
     el.appendChild(grpBottom);
-    
+
     var grpFiltration = document.createElement('div');
     var txtFiltration = document.createElement('div');
     txtFiltration.className += ' vjs-menu-object';
