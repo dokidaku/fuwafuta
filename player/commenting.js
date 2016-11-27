@@ -99,5 +99,7 @@ function commentingPlugin (options) {
     cmtDispBtn.addClass('vjs-icon-subtitles');
     cmtDispBtn.el().setAttribute('title', 'Comments Display');
     player.controlBar.el().insertBefore(cmtDispBtn.el(), fscrCtrl);
+
+    document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
   });
 };
