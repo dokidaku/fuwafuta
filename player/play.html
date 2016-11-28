@@ -60,6 +60,14 @@
       .vjs-toggle-btn.vjs-toggle-btn-filtr.off::after {
         content: 'RAW';
       }
+      .vjs-cmt-popupbtn > .vjs-menu.vjs-cmt-menu {
+        display: none;
+        transition: opacity 200ms ease;
+        opacity: 0;
+      }
+      .vjs-cmt-popupbtn:hover > .vjs-menu.vjs-cmt-menu {
+        opacity: 1;
+      }
     </style>
   </head>
   <body>

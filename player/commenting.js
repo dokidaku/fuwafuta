@@ -21,31 +21,38 @@ var CommentCtrlPanel = function (_Component) {
 
     var grpTop = document.createElement('div');
     var txtTop = document.createElement('div');
-    txtTop.className += ' vjs-menu-object';
+    txtTop.classList.add('vjs-menu-object');
     txtTop.textContent = 'Top';
     grpTop.appendChild(txtTop);
     var btnTop = new Button();
-    btnTop.el().className += ' vjs-menu-object vjs-toggle-btn on';
+    btnTop.el().classList.add('vjs-menu-object');
+    btnTop.el().classList.add('vjs-toggle-btn');
+    btnTop.el().classList.add('on');
     grpTop.appendChild(btnTop.el());
     el.appendChild(grpTop);
 
     var grpBottom = document.createElement('div');
     var txtBottom = document.createElement('div');
-    txtBottom.className += ' vjs-menu-object';
+    txtBottom.classList.add('vjs-menu-object');
     txtBottom.textContent = 'Bottom';
     grpBottom.appendChild(txtBottom);
     var btnBottom = new Button();
-    btnBottom.el().className += ' vjs-menu-object vjs-toggle-btn off';
+    btnBottom.el().classList.add('vjs-menu-object');
+    btnBottom.el().classList.add('vjs-toggle-btn');
+    btnBottom.el().classList.add('off');
     grpBottom.appendChild(btnBottom.el());
     el.appendChild(grpBottom);
 
     var grpFiltration = document.createElement('div');
     var txtFiltration = document.createElement('div');
-    txtFiltration.className += ' vjs-menu-object';
+    txtFiltration.classList.add('vjs-menu-object');
     txtFiltration.textContent = 'Filtration';
     grpFiltration.appendChild(txtFiltration);
     var btnFiltration = new Button();
-    btnFiltration.el().className += ' vjs-menu-object vjs-toggle-btn vjs-toggle-btn-filtr on';
+    btnFiltration.el().classList.add('vjs-menu-object');
+    btnFiltration.el().classList.add('vjs-toggle-btn');
+    btnFiltration.el().classList.add('vjs-toggle-btn-filtr');
+    btnFiltration.el().classList.add('on');
     grpFiltration.appendChild(btnFiltration.el());
     el.appendChild(grpFiltration);
 
@@ -74,6 +81,10 @@ var CommentCtrlPopupBtn = function (_PopupButton) {
     return popup;
   };
 
+  CommentCtrlPopupBtn.prototype.buildCSSClass = function () {
+    return 'vjs-cmt-popupbtn ' + _PopupButton.prototype.buildCSSClass.call(this);
+  };
+
   return CommentCtrlPopupBtn;
 }(PopupButton);
 
@@ -83,7 +94,7 @@ function commentingPlugin (options) {
     var fscrCtrl = document.getElementsByClassName('vjs-fullscreen-control')[0];
 
     var textArea = document.createElement('input');
-    textArea.className += ' vjs-cmtinput';
+    textArea.classList.add('vjs-cmtinput');
     textArea.setAttribute('placeholder', 'Start commenting here = =');
     textArea.setAttribute('maxlength', '140');
     this.controlBar.addChild(textArea);
@@ -99,6 +110,18 @@ function commentingPlugin (options) {
     cmtDispBtn.addClass('vjs-icon-subtitles');
     cmtDispBtn.el().setAttribute('title', 'Comments Display');
     player.controlBar.el().insertBefore(cmtDispBtn.el(), fscrCtrl);
+    
+    var menuBtn = document.getElementsByClassName('vjs-cmt-popupbtn')[0];
+    var menuEl = menuBtn.childNodes[0];
+    menuEl.classList.add('vjs-cmt-menu');
+    menuBtn.addEventListener('mouseenter', (function (_menuEl) { return function (e) {
+      clearTimeout(_menuEl.timer);
+      _menuEl.style.display = 'block';
+    }; }(menuEl)));
+    menuBtn.addEventListener('mouseleave', (function (_menuEl) { return function (e) {
+      clearTimeout(_menuEl.timer);
+      _menuEl.timer = setTimeout(function () { _menuEl.style.display = 'none'; _menuEl.timer = null; }, 360);
+    }; }(menuEl)));
 
     document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
   });
