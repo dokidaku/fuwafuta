@@ -7,6 +7,35 @@ var Button = videojs.getComponent('Button');
 var Popup = videojs.getComponent('Popup');
 var PopupButton = videojs.getComponent('PopupButton');
 
+// Hand-written classes (´Д` )
+var ToggleButton = function (_Button) {
+  _inherits(ToggleButton, _Button);
+
+  function ToggleButton(player, options) {
+    _classCallCheck(this, ToggleButton);
+    var _this = _possibleConstructorReturn(this, _Button.call(this, player, options));
+    _this.controlText(options && options.controlText || '');
+    _this._isOn = false;
+    return _this;
+  }
+  
+  ToggleButton.prototype.buildCSSClass = function buildCSSClass() {
+    return 'vjs-menu-object vjs-toggle-btn off ' + _Button.prototype.buildCSSClass.call(this);
+  };
+
+  ToggleButton.prototype.handleClick = ToggleButton.prototype.manualToggle = function manualToggle() {
+    this._isOn = !this._isOn;
+    if (this._isOn) {
+      this.el_.classList.remove('off'); this.el_.classList.add('on');
+    } else {
+      this.el_.classList.remove('on'); this.el_.classList.add('off');
+    }
+    this.trigger('toggle', this._isOn);
+  };
+
+  return ToggleButton;
+}(Button);
+
 var CommentCtrlPanel = function (_Component) {
   _inherits(CommentCtrlPanel, _Component);
 
@@ -24,10 +53,10 @@ var CommentCtrlPanel = function (_Component) {
     txtTop.classList.add('vjs-menu-object');
     txtTop.textContent = 'Top';
     grpTop.appendChild(txtTop);
-    var btnTop = new Button();
-    btnTop.el().classList.add('vjs-menu-object');
-    btnTop.el().classList.add('vjs-toggle-btn');
-    btnTop.el().classList.add('on');
+    var btnTop = new ToggleButton();
+    btnTop.on('toggle', function (e, isOn) {
+      console.log('TOP: ' + isOn);
+    });
     grpTop.appendChild(btnTop.el());
     el.appendChild(grpTop);
 
@@ -36,10 +65,10 @@ var CommentCtrlPanel = function (_Component) {
     txtBottom.classList.add('vjs-menu-object');
     txtBottom.textContent = 'Bottom';
     grpBottom.appendChild(txtBottom);
-    var btnBottom = new Button();
-    btnBottom.el().classList.add('vjs-menu-object');
-    btnBottom.el().classList.add('vjs-toggle-btn');
-    btnBottom.el().classList.add('off');
+    var btnBottom = new ToggleButton();
+    btnBottom.on('toggle', function (e, isOn) {
+      console.log('BTM: ' + isOn);
+    });
     grpBottom.appendChild(btnBottom.el());
     el.appendChild(grpBottom);
 
@@ -48,11 +77,11 @@ var CommentCtrlPanel = function (_Component) {
     txtFiltration.classList.add('vjs-menu-object');
     txtFiltration.textContent = 'Filtration';
     grpFiltration.appendChild(txtFiltration);
-    var btnFiltration = new Button();
-    btnFiltration.el().classList.add('vjs-menu-object');
-    btnFiltration.el().classList.add('vjs-toggle-btn');
-    btnFiltration.el().classList.add('vjs-toggle-btn-filtr');
-    btnFiltration.el().classList.add('on');
+    var btnFiltration = new ToggleButton();
+    btnFiltration.addClass('vjs-toggle-btn-filtr');
+    btnFiltration.on('toggle', function (e, isOn) {
+      console.log('FLT: ' + isOn);
+    });
     grpFiltration.appendChild(btnFiltration.el());
     el.appendChild(grpFiltration);
 
