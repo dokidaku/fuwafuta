@@ -42,22 +42,25 @@
         font-size: 1.5em;
         height: auto;
       }
-      .vjs-toggle-btn.on {
+      button.vjs-toggle-btn {
+        transition: background 120ms cubic-bezier(0.39, 0.575, 0.565, 1);
+      }
+      button.vjs-toggle-btn.on {
         background: #19c;
       }
-      .vjs-toggle-btn.on::after {
+      button.vjs-toggle-btn.on::after {
         content: 'ON';
       }
-      .vjs-toggle-btn.off {
+      button.vjs-toggle-btn.off {
         background: #444;
       }
-      .vjs-toggle-btn.off::after {
+      button.vjs-toggle-btn.off::after {
         content: 'OFF';
       }
-      .vjs-toggle-btn.vjs-toggle-btn-filtr.on::after {
+      button.vjs-toggle-btn.vjs-toggle-btn-filtr.on::after {
         content: 'FILTERED';
       }
-      .vjs-toggle-btn.vjs-toggle-btn-filtr.off::after {
+      button.vjs-toggle-btn.vjs-toggle-btn-filtr.off::after {
         content: 'RAW';
       }
       .vjs-cmt-popupbtn > .vjs-menu.vjs-cmt-menu {
