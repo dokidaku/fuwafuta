@@ -12,17 +12,6 @@
   comment_canvas.height = window_h;
   var comment_draw_ctx = comment_canvas.getContext ? comment_canvas.getContext('2d') : {};
 
-  commenting.update_el = function () {
-    comment_canvas = document.getElementById('comment-canvas');
-    comment_canvas.width = window_w;
-    comment_canvas.height = window_h;
-    comment_draw_ctx = comment_canvas.getContext('2d');
-  }
-  commenting.update_size = function (new_w, new_h) {
-    window_w = comment_canvas.width = new_w;
-    window_h = comment_canvas.height = new_h;
-  }
-
   var comment_types = { TOP_SLIDE: 0, TOP_STICK: 1, BOTTOM_STICK: 2 };
 
   var comment_onboard_bullets = [];
@@ -185,6 +174,10 @@
       this.y_for_line(positioning_data.line_num, cmt_h), (this.width - cmt_w) / 2, cmt_w, cmt_h, 0, duration);
     return true;
   };
+  CommentBoardTopSlide.prototype.update_size = CommentBoardStick.prototype.update_size = function () {
+    this.width = window_w;
+    this.height = window_h;
+  };
   CommentBoardStick.prototype.y_for_line = function (num, cmt_h) { return 0; }; // Override me
   var CommentBoardTopStick = comment_board_stick_ctor();
   CommentBoardTopStick.prototype = new CommentBoardStick();
@@ -222,6 +215,20 @@
       board_array[board_array.length - 1].fire(c.id, c.message, c.color);
     }
   };
+  commenting.update_el = function () {
+    comment_canvas = document.getElementById('comment-canvas');
+    comment_canvas.width = window_w;
+    comment_canvas.height = window_h;
+    comment_draw_ctx = comment_canvas.getContext('2d');
+  }
+  commenting.update_size = function (new_w, new_h, new_hlimit) {
+    window_w = comment_canvas.width = new_w;
+    window_h = comment_canvas.height = new_h;
+    height_limit = new_hlimit || new_h;
+    for (var i = 0; i < comment_board_topslide.length; ++i) comment_board_topslide[i].update_size();
+    for (var i = 0; i < comment_board_topstick.length; ++i) comment_board_topstick[i].update_size();
+    for (var i = 0; i < comment_board_bottomstick.length; ++i) comment_board_bottomstick[i].update_size();
+  }
   commenting.pause = function () {
     comment_is_paused = true;
     comment_paused_at = Date.now();

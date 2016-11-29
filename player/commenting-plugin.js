@@ -163,8 +163,13 @@ function commentingPlugin (options) {
     canvas.style.pointerEvents = 'none';
     player.addChild({ name: function () { return 'CommentingOverlayCanvas'; }, el: function () { return canvas; } });
     window.commenting.update_el();
-    window.commenting.update_size(player.el().offsetWidth, player.el().offsetHeight);
-    player.on('resize', function () { window.commenting.update_size(player.el().offsetWidth, player.el().offsetHeight); });
+    var updateCanvasSize = function () {
+      window.commenting.update_size(player.el().offsetWidth, player.el().offsetHeight);
+    };
+    updateCanvasSize();
+    player.on('loadedmetadata', updateCanvasSize);
+    player.on('resize', updateCanvasSize);
+    player.on('fullscreenchange', updateCanvasSize);
     player.on('pause', function () { window.commenting.pause(); });
     player.on('play', function () { window.commenting.resume(); });
     window.commenting.resume();
