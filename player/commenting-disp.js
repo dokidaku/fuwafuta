@@ -7,10 +7,21 @@
   var padding_bottom = 30;
   var height_limit = window_h;
 
-  var comment_canvas = document.getElementById('comment-canvas');
+  var comment_canvas = document.getElementById('comment-canvas') || {};
   comment_canvas.width = window_w;
   comment_canvas.height = window_h;
-  var comment_draw_ctx = comment_canvas.getContext('2d');
+  var comment_draw_ctx = comment_canvas.getContext ? comment_canvas.getContext('2d') : {};
+
+  commenting.update_el = function () {
+    comment_canvas = document.getElementById('comment-canvas');
+    comment_canvas.width = window_w;
+    comment_canvas.height = window_h;
+    comment_draw_ctx = comment_canvas.getContext('2d');
+  }
+  commenting.update_size = function (new_w, new_h) {
+    window_w = comment_canvas.width = new_w;
+    window_h = comment_canvas.height = new_h;
+  }
 
   var comment_types = { TOP_SLIDE: 0, TOP_STICK: 1, BOTTOM_STICK: 2 };
 
