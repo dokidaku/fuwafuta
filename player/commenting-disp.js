@@ -37,6 +37,7 @@
   };
   var comment_update_last_time = -1;
   var comment_is_paused = false;
+  var comment_paused_at = -1;
   var comment_highlighted_idx = -1;
   var comment_update_bullets = function () {
     var now = Date.now();
@@ -52,13 +53,11 @@
     for (var i = 0; i < comment_onboard_bullets.length; ++i) {
       cur_bullet = comment_onboard_bullets[i];
       if (!cur_bullet) continue;
-      if (!comment_is_paused) {
-        cur_bullet.x += cur_bullet.xspeed * delta;
-        if ((cur_bullet.life -= delta) <= 0) {
-          if (commenting.expiry_callback) commenting.expiry_callback(cur_bullet);
-          comment_onboard_bullets[i] = undefined;
-          continue;
-        }
+      cur_bullet.x += cur_bullet.xspeed * delta;
+      if ((cur_bullet.life -= delta) <= 0) {
+        if (commenting.expiry_callback) commenting.expiry_callback(cur_bullet);
+        comment_onboard_bullets[i] = undefined;
+        continue;
       }
       // Draw the bullet
       comment_draw_ctx.fillStyle = cur_bullet.color;
@@ -71,7 +70,7 @@
     }
     comment_update_last_time = now;
   };
-  setInterval(comment_update_bullets, 25);
+  commenting._timer = setInterval(comment_update_bullets, 25);
   comment_update_last_time = Date.now();
 
   // For selecting comments with mouse
@@ -225,13 +224,20 @@
   };
   commenting.pause = function () {
     comment_is_paused = true;
+    comment_paused_at = Date.now();
+    clearInterval(commenting._timer);
+    commenting._timer = null;
   };
   commenting.resume = function () {
     comment_is_paused = false;
+    comment_update_last_time += (Date.now() - comment_paused_at);
+    comment_paused_at = -1;
+    commenting._timer = setInterval(comment_update_bullets, 25);
   };
   commenting.toggle_pause = function () {
-    comment_is_paused = !comment_is_paused;
+    if (comment_is_paused) commenting.resume(); else commenting.pause();
   };
+  commenting.pause();
 
   window.commenting = commenting;
   window.commenting.type = comment_types;

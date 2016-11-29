@@ -167,5 +167,6 @@ function commentingPlugin (options) {
     player.on('resize', function () { window.commenting.update_size(player.el().offsetWidth, player.el().offsetHeight); });
     player.on('pause', function () { window.commenting.pause(); });
     player.on('play', function () { window.commenting.resume(); });
+    window.commenting.resume();
   });
 };
