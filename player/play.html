@@ -45,24 +45,14 @@
       button.vjs-toggle-btn {
         transition: background 120ms cubic-bezier(0.39, 0.575, 0.565, 1);
       }
-      button.vjs-toggle-btn.on {
-        background: #19c;
-      }
-      button.vjs-toggle-btn.on::after {
-        content: 'ON';
-      }
-      button.vjs-toggle-btn.off {
-        background: #444;
-      }
-      button.vjs-toggle-btn.off::after {
-        content: 'OFF';
-      }
-      button.vjs-toggle-btn.vjs-toggle-btn-filtr.on::after {
-        content: 'FILTERED';
-      }
-      button.vjs-toggle-btn.vjs-toggle-btn-filtr.off::after {
-        content: 'RAW';
-      }
+      button.vjs-toggle-btn.on { background: #19c; }
+      button.vjs-toggle-btn.off { background: #444; }
+      button.vjs-toggle-btn.on::after { content: 'ON'; }
+      button.vjs-toggle-btn.off::after { content: 'OFF'; }
+      button.vjs-toggle-btn.vjs-toggle-btn-send.on::after { content: 'BOTTOM'; }
+      button.vjs-toggle-btn.vjs-toggle-btn-send.off::after { content: 'TOP'; }
+      button.vjs-toggle-btn.vjs-toggle-btn-filtr.on::after { content: 'FILTERED'; }
+      button.vjs-toggle-btn.vjs-toggle-btn-filtr.off::after { content: 'RAW'; }
       .vjs-cmt-popupbtn > .vjs-menu.vjs-cmt-menu {
         display: none;
         transition: opacity 200ms ease;

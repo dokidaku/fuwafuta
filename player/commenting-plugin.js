@@ -48,6 +48,18 @@ var CommentCtrlPanel = function (_Component) {
   CommentCtrlPanel.prototype.createEl = function createEl() {
     var el = _Component.prototype.createEl.call(this, 'div', { className: 'vjs-cmtctrlpanel vjs-control' });
 
+    var grpSendAs = document.createElement('div');
+    var txtSendAs = document.createElement('div');
+    txtSendAs.classList.add('vjs-menu-object');
+    txtSendAs.textContent = 'Send As';
+    grpSendAs.appendChild(txtSendAs);
+    var btnSendAs = new ToggleButton();
+    btnSendAs.addClass('vjs-toggle-btn-send');
+    btnSendAs.on('toggle', (function (_this) { return function (e, isOn) { _this._sendAsBottom = isOn; }; }(this)));
+    this._sendAsBottom = false;
+    grpSendAs.appendChild(btnSendAs.el());
+    el.appendChild(grpSendAs);
+
     var grpTop = document.createElement('div');
     var txtTop = document.createElement('div');
     txtTop.classList.add('vjs-menu-object');
@@ -106,6 +118,7 @@ var CommentCtrlPopupBtn = function (_PopupButton) {
     popup.el().style.height = 'auto';
     var b = new CommentCtrlPanel();
     popup.addItem(b);
+    this.panel = b;
 
     return popup;
   };
@@ -132,15 +145,11 @@ function commentingPlugin (options) {
     var sendBtn = new Button();
     sendBtn.addClass('vjs-icon-circle-inner-circle');
     sendBtn.el().setAttribute('title', 'Send');
-    sendBtn.on('click', (function (_textArea) { return function () {
-      if (Math.random() < 0.5) player.ctel.emitTop(_textArea.value, 'white');
-      else player.ctel.emitBottom(_textArea.value, 'white');
-    }; }(textArea)));
     player.controlBar.el().insertBefore(sendBtn.el(), fscrCtrl);
 
     var cmtDispBtn = new CommentCtrlPopupBtn(this);
     cmtDispBtn.addClass('vjs-icon-subtitles');
-    cmtDispBtn.el().setAttribute('title', 'Comments Display');
+    cmtDispBtn.el().setAttribute('title', 'Comments Settings');
     player.controlBar.el().insertBefore(cmtDispBtn.el(), fscrCtrl);
     
     var menuBtn = document.getElementsByClassName('vjs-cmt-popupbtn')[0];
@@ -154,6 +163,11 @@ function commentingPlugin (options) {
       clearTimeout(_menuEl.timer);
       _menuEl.timer = setTimeout(function () { _menuEl.style.display = 'none'; _menuEl.timer = null; }, 360);
     }; }(menuEl)));
+
+    sendBtn.on('click', (function (_panel, _textArea) { return function () {
+      if (_panel._sendAsBottom) player.ctel.emitBottom(_textArea.value, 'white');
+      else player.ctel.emitTop(_textArea.value, 'white');
+    }; }(cmtDispBtn.panel, textArea)));
 
     document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
 
