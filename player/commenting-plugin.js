@@ -133,6 +133,7 @@ function commentingPlugin (options) {
     sendBtn.addClass('vjs-icon-circle-inner-circle');
     sendBtn.el().setAttribute('title', 'Send');
     sendBtn.on('click', (function (_textArea) { return function () {
+      player.ctel.emitTop(_textArea.value, 'white');
     }; }(textArea)));
     player.controlBar.el().insertBefore(sendBtn.el(), fscrCtrl);
 
