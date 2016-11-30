@@ -1,3 +1,10 @@
+// Network parts
+var createXHR;
+if (window.XMLHttpRequest) createXHR = function () { return new XMLHttpRequest(); };
+else createXHR = function () { return new ActiveXObject('Microsoft.XMLHTTP'); };
+
+// Plug-in parts
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -174,5 +181,20 @@ function commentingPlugin (options) {
     // Overlay
     player.ctel = new ctel({ width: player.el().offsetWidth, height: player.el().offsetHeight });
     player.addChild({ name: function () { return 'CommentingOverlay'; }, el: function () { return player.ctel.getEl(); } });
+
+    // Connecting to socket
+    var socket = io('http://localhost:6034/');
+    socket.on('unauthorized', function () {
+      window.location.href = window.location.href;
+    });
+    socket.on('comment', function (c) {
+      // c: id, text, attr("<color>;<t/b>")
+      var p = c.attr.lastIndexOf(';');
+      var colour = c.attr.substring(0, p), style = c.attr.substring(p + 1);
+      //console.log(colour, style);
+      if (style === 't') player.ctel.emitTop(c.text, colour);
+      else if (style === 'b') player.ctel.emitBottom(c.text, colour);
+      //else console.log('Invalid style!');
+    });
   });
 };

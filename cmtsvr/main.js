@@ -44,6 +44,11 @@ const notifyAll = async (priv, obj, event) => {
   }
 }
 
+const approveComment = async (cid) => {
+  const cmt = await redis.hmget('cmt:' + cid, 'text', 'attr')
+  await notifyAll(role_priv.APPROVED, { id: cid, state: role_priv.APPROVED, text: cmt[0], attr: cmt[1] })
+}
+
 const createComment = async (uid, text, attr) => {
   // Add to the database
   console.log(`From ${uid}: ${text} / ${attr}`)
@@ -59,16 +64,16 @@ const createComment = async (uid, text, attr) => {
   }
   transaction.exec()
   await notifyAll(role_priv.UNFILTERED, { id: cid, state: role_priv.UNFILTERED, text: text, attr: attr })
+  if (jury.length == 0) {
+    await approveComment(cid)
+  }
 }
 
 const scoreComment = async (cid, uid, score) => {
   if (await redis.srem('cmtjury:' + cid, uid) < 1) return
   const new_score = await redis.hincrby('cmt:' + cid, 'score', score)
   if (await redis.scard('cmtjury:' + cid) == 0) {
-    if (new_score >= 0) {
-      const cmt = await redis.hmget('cmt:' + cid, 'text', 'attr')
-      await notifyAll(role_priv.APPROVED, { id: cid, state: role_priv.APPROVED, text: cmt[0], attr: cmt[1] })
-    }
+    if (new_score >= 0) await approveComment(cid)
   }
 }
 
@@ -138,6 +143,10 @@ router.get('/', ctx => {
 
 router.get('/static/:file', async (ctx, next) => {
   await send(ctx, ctx.params.file, { root: __dirname + '/static' })
+  return next()
+})
+router.get('/player/:file', checkCookies(null), async (ctx, next) => {
+  await send(ctx, ctx.params.file, { root: __dirname + '/../player' })
   return next()
 })
 
