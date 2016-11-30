@@ -53,13 +53,14 @@
     el.style.fontSize = '24px';
     el.style.color = colour || 'white';
     el.style.width = 'auto';
+    el.style.whiteSpace = 'nowrap'; // for handling whitespaces; see http://stackoverflow.com/questions/118241/
     el.textContent = text;
     el.style.position = 'absolute';
     el.style.pointerEvents = 'none';
     // Abstractions
     var now = Date.now();
-    var x = this.opt.width + el.clientWidth;
-    var d = this.opt.width + el.clientWidth * 2;
+    var x = this.opt.width;
+    var d = this.opt.width + el.clientWidth;
     var t = 10000;
     var v = d / t;
     var unblockR = now + el.clientWidth / v;
