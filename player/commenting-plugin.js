@@ -133,8 +133,6 @@ function commentingPlugin (options) {
     sendBtn.addClass('vjs-icon-circle-inner-circle');
     sendBtn.el().setAttribute('title', 'Send');
     sendBtn.on('click', (function (_textArea) { return function () {
-      if (!window.commenting.is_paused())
-        window.commenting.fire({ color: 'white', position: 0, message: _textArea.value });
     }; }(textArea)));
     player.controlBar.el().insertBefore(sendBtn.el(), fscrCtrl);
 
@@ -158,21 +156,7 @@ function commentingPlugin (options) {
     document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
 
     // Overlay
-    var canvas = document.createElement('canvas');
-    canvas.id = 'comment-canvas';
-    canvas.style.position = 'absolute';
-    canvas.style.pointerEvents = 'none';
-    player.addChild({ name: function () { return 'CommentingOverlayCanvas'; }, el: function () { return canvas; } });
-    window.commenting.update_el();
-    var updateCanvasSize = function () {
-      window.commenting.update_size(player.el().offsetWidth, player.el().offsetHeight);
-    };
-    updateCanvasSize();
-    player.on('loadedmetadata', updateCanvasSize);
-    player.on('resize', updateCanvasSize);
-    player.on('fullscreenchange', updateCanvasSize);
-    player.on('pause', function () { window.commenting.pause(); });
-    player.on('play', function () { window.commenting.resume(); });
-    window.commenting.resume();
+    player.ctel = new ctel({ width: player.el().offsetWidth, height: player.el().offsetHeight });
+    player.addChild({ name: function () { return 'CommentingOverlay'; }, el: function () { return player.ctel.getEl(); } });
   });
 };
