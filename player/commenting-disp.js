@@ -2,7 +2,7 @@
   var ctel = function (opt) {
     if (!(this instanceof ctel)) return new ctel(opt);
     opt = opt || {};
-    opt.lineHeight = opt.lineHeight || 64;
+    opt.lineHeight = opt.lineHeight || 28;
     opt.width = opt.width || window.innerWidth || 1080;
     opt.height = opt.height || window.innerHeight || 720;
     opt.removeCallback = opt.removeCallback || undefined;
@@ -27,6 +27,7 @@
     this._el.style.top = '0px';
     this._el.style.pointerEvents = 'none';
     this._el.style.background = 'none';
+    this._el.style.overflow = 'hidden';
     this.updateSize();
   };
 
@@ -41,6 +42,9 @@
     while (this._rowTSpareR.length < cur_rows) this._rowTSpareR.push(-1);
     while (this._rowTSpareL.length < cur_rows) this._rowTSpareL.push(-1);
     while (this._rowBSpare.length < cur_rows) this._rowBSpare.push(-1);
+    while (this._rowTSpareR.length > cur_rows) this._rowTSpareR.pop();
+    while (this._rowTSpareL.length > cur_rows) this._rowTSpareL.pop();
+    while (this._rowBSpare.length > cur_rows) this._rowBSpare.pop();
   };
 
   ctel.prototype.emitTop = function (text, colour) {
@@ -52,10 +56,26 @@
     el.textContent = text;
     el.style.position = 'absolute';
     el.style.pointerEvents = 'none';
-    el.style.transition = 'left 10s linear';
+    // Abstractions
+    var now = Date.now();
     var x = this.opt.width + el.clientWidth;
-    el.style.left = x.toString() + 'px';
-    el.style.top = '0px';
+    var d = this.opt.width + el.clientWidth * 2;
+    var t = 10000;
+    var v = d / t;
+    var unblockR = now + el.clientWidth / v;
+    var touchL = now + x / v;
+    var unblockL = now + t;
+    var rowIdx = -1;
+    for (var i = 0; i < this._rowTSpareL.length; ++i) {
+      if (this._rowTSpareR[i] < now && this._rowTSpareL[i] < touchL) { rowIdx = i; break; }
+    }
+    this._rowTSpareR[rowIdx] = unblockR;
+    this._rowTSpareL[rowIdx] = unblockL;
+    console.log(rowIdx);
+    // Styles
+    el.style.transition = 'left ' + Math.round(t / 1000).toString() + 's linear';
+    el.style.left = Math.round(x).toString() + 'px';
+    el.style.top = Math.round(rowIdx * this.opt.lineHeight).toString() + 'px';
     this._bulletsT.push(el);
     setTimeout((function (_el, _x) { return function () {
       _el.style.left = _x.toString() + 'px';
