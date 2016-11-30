@@ -164,7 +164,7 @@ router.post('/set_filtration/:is_restrained([01])',
 )
 
 router.post('/verify', checkCookies(null), bodyParser, async (ctx, next) => {
-  const new_role = pass_cfg[ctx.request.body.pass]
+  const new_role = pass_cfg[ctx.request.body]
   if (new_role != null) {
     await reassignClient(clientID(ctx), new_role)
     ctx.body = 'Success ♪( ´▽｀)'
