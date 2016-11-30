@@ -69,9 +69,14 @@
     for (var i = 0; i < this._rowTSpareL.length; ++i) {
       if (this._rowTSpareR[i] < now && this._rowTSpareL[i] < touchL) { rowIdx = i; break; }
     }
+    if (rowIdx == -1) {
+      rowIdx = 0;
+      for (var i = 1; i < this._rowTSpareL.length; ++i) {
+        if (this._rowTSpareL[i] < this._rowTSpareL[rowIdx]) rowIdx = i;
+      }
+    }
     this._rowTSpareR[rowIdx] = unblockR;
     this._rowTSpareL[rowIdx] = unblockL;
-    console.log(rowIdx);
     // Styles
     el.style.transition = 'left ' + Math.round(t / 1000).toString() + 's linear';
     el.style.left = Math.round(x).toString() + 'px';
