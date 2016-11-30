@@ -133,7 +133,8 @@ function commentingPlugin (options) {
     sendBtn.addClass('vjs-icon-circle-inner-circle');
     sendBtn.el().setAttribute('title', 'Send');
     sendBtn.on('click', (function (_textArea) { return function () {
-      window.commenting.fire({ color: 'white', position: 0, message: _textArea.value });
+      if (!window.commenting.is_paused())
+        window.commenting.fire({ color: 'white', position: 0, message: _textArea.value });
     }; }(textArea)));
     player.controlBar.el().insertBefore(sendBtn.el(), fscrCtrl);
 

@@ -220,7 +220,7 @@
     comment_canvas.width = window_w;
     comment_canvas.height = window_h;
     comment_draw_ctx = comment_canvas.getContext('2d');
-  }
+  };
   commenting.update_size = function (new_w, new_h, new_hlimit) {
     window_w = comment_canvas.width = new_w;
     window_h = comment_canvas.height = new_h;
@@ -228,7 +228,10 @@
     for (var i = 0; i < comment_board_topslide.length; ++i) comment_board_topslide[i].update_size();
     for (var i = 0; i < comment_board_topstick.length; ++i) comment_board_topstick[i].update_size();
     for (var i = 0; i < comment_board_bottomstick.length; ++i) comment_board_bottomstick[i].update_size();
-  }
+  };
+  commenting.is_paused = function () {
+    return comment_is_paused;
+  };
   commenting.pause = function () {
     comment_is_paused = true;
     comment_paused_at = Date.now();
