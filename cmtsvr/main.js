@@ -62,6 +62,7 @@ const createComment = async (uid, text, attr) => {
   const jury = await redis.smembers('group:' + role_cfg.MODERATOR)
   if (jury.length != 0) {
     transaction.sadd.apply(transaction, ['cmtjury:' + cid].concat(jury))
+    transaction.zadd('pending-cmts', Date.now(), cid)
   }
   transaction.exec()
   await notifyAll(role_priv.UNFILTERED, { id: cid, state: role_priv.UNFILTERED, text: text, attr: attr })
@@ -69,6 +70,18 @@ const createComment = async (uid, text, attr) => {
     await approveComment(cid)
   }
 }
+
+const wrapupInterval = 10000;
+const wrapupThreshold = 30000;
+const wrapupPendingComments = async () => {
+  const now = Date.now()
+  const ordered = await redis.zrangebyscore('pending-cmts', -1, now - wrapupThreshold)
+  for (var i = 0; i < ordered.length; ++i) {
+    if (await redis.hget('cmt:' + ordered[i], 'score') >= 0) await approveComment(ordered[i])
+  }
+  await redis.zremrangebyscore('pending-cmts', -1, now - wrapupThreshold)
+}
+setInterval(wrapupPendingComments, wrapupInterval)
 
 const scoreComment = async (cid, uid, score) => {
   if (await redis.srem('cmtjury:' + cid, uid) < 1) return
