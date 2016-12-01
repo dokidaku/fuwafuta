@@ -236,14 +236,15 @@ io.on('connection', async (socket) => {
     await logoutClient(socket.uid)
   })(socket))
 
-  socket.on('pop', ((_socket) => (text, attr) => {
-    createComment(_socket.uid, text, attr)
+  socket.on('pop', ((_socket) => async (text, attr, callback) => {
+    await createComment(_socket.uid, text, attr)
+    if (callback) callback()
   })(socket))
-  socket.on('approve', ((_socket) => (cid) => {
-    scoreComment(cid, _socket.uid, +1)
+  socket.on('approve', ((_socket) => async (cid) => {
+    await scoreComment(cid, _socket.uid, +1)
   })(socket))
-  socket.on('overrule', ((_socket) => (cid) => {
-    scoreComment(cid, _socket.uid, -1)
+  socket.on('overrule', ((_socket) => async (cid) => {
+    await scoreComment(cid, _socket.uid, -1)
   })(socket))
 })
 

@@ -99,6 +99,16 @@ var CommentCtrlPanel = function (_Component) {
     var btnFiltration = new ToggleButton();
     btnFiltration.addClass('vjs-toggle-btn-filtr');
     btnFiltration.on('toggle', function (e, isOn) {
+      if (e.target.classList.contains('waiting')) return;
+      e.target.classList.add('waiting');
+      var xhr = createXHR();
+      xhr.onreadystatechange = (function (_target) { return function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          _target.classList.remove('waiting');
+        }
+      }; }(e.target))
+      xhr.open('POST', '/set_filtration/' + (isOn ? '1' : '0'), true);
+      xhr.send();
       console.log('FLT: ' + isOn);
     });
     grpFiltration.appendChild(btnFiltration.el());
@@ -174,7 +184,12 @@ function commentingPlugin (options) {
     sendBtn.on('click', (function (_panel, _textArea) { return function () {
       var style = '#ffffff' + ';' + (_panel._sendAsBottom ? 'b' : 't');
       var text = _textArea.value;
-      socket.emit('pop', text, style);
+      if (text.trim().length === 0) return;
+      _textArea.setAttribute('disabled', '');
+      socket.emit('pop', text, style, (function (__textArea) { return function () {
+        __textArea.value = '';
+        setTimeout(function () { __textArea.removeAttribute('disabled'); }, 5000);
+      }; }(_textArea)));
     }; }(cmtDispBtn.panel, textArea)));
 
     document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
