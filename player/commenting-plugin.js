@@ -30,13 +30,17 @@ var ToggleButton = function (_Button) {
     return 'vjs-menu-object vjs-toggle-btn off ' + _Button.prototype.buildCSSClass.call(this);
   };
 
-  ToggleButton.prototype.handleClick = ToggleButton.prototype.manualToggle = function manualToggle() {
+  ToggleButton.prototype.manualToggle = function manualToggle() {
     this._isOn = !this._isOn;
     if (this._isOn) {
       this.el_.classList.remove('off'); this.el_.classList.add('on');
     } else {
       this.el_.classList.remove('on'); this.el_.classList.add('off');
     }
+  };
+
+  ToggleButton.prototype.handleClick = function handleClick() {
+    this.manualToggle();
     this.trigger('toggle', this._isOn);
   };
 
@@ -113,6 +117,15 @@ var CommentCtrlPanel = function (_Component) {
     });
     grpFiltration.appendChild(btnFiltration.el());
     el.appendChild(grpFiltration);
+    var xhr = createXHR();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var filState = parseInt(xhr.responseText);
+        if (filState == 1) btnFiltration.manualToggle();
+      }
+    }
+    xhr.open('GET', '/get_filtration', true);
+    xhr.send();
 
     return el;
   };
