@@ -184,7 +184,7 @@ function commentingPlugin (options) {
     player.addChild({ name: function () { return 'CommentingOverlay'; }, el: function () { return player.ctel.getEl(); } });
 
     // Connecting to socket
-    var socket = io('http://localhost:6034/');
+    var socket = io();
     socket.on('unauthorized', function () {
       window.location.href = window.location.href;
     });

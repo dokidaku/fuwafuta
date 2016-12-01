@@ -7,7 +7,6 @@ const bodyParser = require('koa-body')()
 const Router = require('koa-better-router')
 const router = new Router().loadMethods()
 
-const io = require('socket.io')(6034)
 var sockets = {}, sidmap = {}
 const role_priv = {
   NOTHING: 0, UNFILTERED: 1, APPROVED: 2, OVERRULED: 4, OWN: 8,
@@ -27,6 +26,8 @@ const redis = new Redis()
 
 const cookie = require('cookie')
 const uuid = require('uuid')
+
+app.use(router.middleware())
 
 const pass_cfg = {
   'nodnod985661441': role_cfg.MODERATOR,
@@ -197,7 +198,8 @@ router.post('/new_comment', checkCookies(role_cfg.IMSERVER), bodyParser, async (
   ctx.body = 'Success ♪( ´▽｀)'
 })
 
-app.use(router.middleware())
+const server = require('http').Server(app.callback())
+const io = require('socket.io')(server)
 
 router.get('/my', checkCookies(null), async (ctx, next) => {
   var uid = clientID(ctx)
@@ -245,6 +247,6 @@ io.on('connection', async (socket) => {
   })(socket))
 })
 
-app.listen(6033, () => {
+server.listen(6033, () => {
   console.log('Up at http://127.0.0.1:6033/ (/=w=)~')
 })

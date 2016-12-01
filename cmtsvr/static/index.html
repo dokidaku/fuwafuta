@@ -17,7 +17,7 @@
       if (window.XMLHttpRequest) createXHR = function () { return new XMLHttpRequest(); };
       else createXHR = function () { return new ActiveXObject('Microsoft.XMLHTTP'); };
 
-      var socket = io('http://localhost:6034/');
+      var socket = io();
       socket.on('unauthorized', function () {
         //window.alert('Please refresh the page')
         window.location.href = window.location.href;
