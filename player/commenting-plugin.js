@@ -25,7 +25,7 @@ var ToggleButton = function (_Button) {
     _this._isOn = false;
     return _this;
   }
-  
+
   ToggleButton.prototype.buildCSSClass = function buildCSSClass() {
     return 'vjs-menu-object vjs-toggle-btn off ' + _Button.prototype.buildCSSClass.call(this);
   };
@@ -172,8 +172,9 @@ function commentingPlugin (options) {
     }; }(menuEl)));
 
     sendBtn.on('click', (function (_panel, _textArea) { return function () {
-      if (_panel._sendAsBottom) player.ctel.emitBottom(_textArea.value, 'white');
-      else player.ctel.emitTop(_textArea.value, 'white');
+      var style = '#ffffff' + ';' + (_panel._sendAsBottom ? 'b' : 't');
+      var text = _textArea.value;
+      socket.emit('pop', text, style);
     }; }(cmtDispBtn.panel, textArea)));
 
     document.getElementsByClassName('vjs-captions-button')[0].style.display = 'none';
@@ -191,10 +192,8 @@ function commentingPlugin (options) {
       // c: id, text, attr("<color>;<t/b>")
       var p = c.attr.lastIndexOf(';');
       var colour = c.attr.substring(0, p), style = c.attr.substring(p + 1);
-      //console.log(colour, style);
       if (style === 't') player.ctel.emitTop(c.text, colour);
       else if (style === 'b') player.ctel.emitBottom(c.text, colour);
-      //else console.log('Invalid style!');
     });
   });
 };
