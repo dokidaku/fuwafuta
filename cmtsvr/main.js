@@ -155,8 +155,8 @@ router.get('/', ctx => {
   ctx.redirect('/index.html')
 })
 
-router.get('/static/:file', async (ctx, next) => {
-  await send(ctx, ctx.params.file, { root: __dirname + '/static' })
+router.get('/lib/:file', async (ctx, next) => {
+  await send(ctx, ctx.params.file, { root: __dirname + '/../player/lib' })
   return next()
 })
 router.get('/player/:file', checkCookies(null), async (ctx, next) => {
