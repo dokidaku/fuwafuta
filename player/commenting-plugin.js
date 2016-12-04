@@ -59,6 +59,20 @@ var CommentCtrlPanel = function (_Component) {
   CommentCtrlPanel.prototype.createEl = function createEl() {
     var el = _Component.prototype.createEl.call(this, 'div', { className: 'vjs-cmtctrlpanel vjs-control' });
 
+    var grpKara = document.createElement('div');
+    var txtKara = document.createElement('div');
+    txtKara.classList.add('vjs-menu-object');
+    txtKara.textContent = 'Colour';
+    grpKara.appendChild(txtKara);
+    var iptKara = document.createElement('button');
+    iptKara.classList.add('vjs-menu-object');
+    var picker = new jscolor(iptKara, {
+      container: grpKara, value: "FFFFFF", mode: "HS", position: "left", hash: true,
+      width: 120, height: 80, shadow: false, backgroundColor: 'transparent', borderWidth: 0
+    });
+    grpKara.appendChild(iptKara);
+    el.appendChild(grpKara);
+
     var grpSendAs = document.createElement('div');
     var txtSendAs = document.createElement('div');
     txtSendAs.classList.add('vjs-menu-object');
