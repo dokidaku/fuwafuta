@@ -192,13 +192,20 @@ function commentingPlugin (options) {
 
     // Overlay
     player.ctel = new ctel({
-      width: player.el().offsetWidth, height: player.el().offsetHeight,
+      width: player.el().offsetWidth, height: player.el().offsetHeight - 40,
       removeCallback: function (id) {
         socket.emit('overrule', id);
       }, timeoutCallback: function (id) {
         socket.emit('approve', id);
       }
     });
+    var cuddlyTgUpdSize = (function (_player, _ctel) { return function () {
+      _ctel.updateSize(player.el().offsetWidth, player.el().offsetHeight - (_player.userActive() ? 40 : 0));
+    }; }(player, player.ctel));
+    player.on('resize', cuddlyTgUpdSize);
+    player.on('fullscreenchange', function () { setTimeout(cuddlyTgUpdSize, 500); });
+    player.on('useractive', cuddlyTgUpdSize);
+    player.on('userinactive', cuddlyTgUpdSize);
     player.addChild({ name: function () { return 'CommentingOverlay'; }, el: function () { return player.ctel.getEl(); } }, 0);
     if (options.isModerator) {
       var videoTechEl = player.el().childNodes[0];
