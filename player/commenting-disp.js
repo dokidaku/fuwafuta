@@ -107,15 +107,6 @@
     }; }(this));
     el.addEventListener('transitionend', transitionEndCallback);
     el.addEventListener('webkitTransitionend', transitionEndCallback);
-    // Handle mouse events
-    if (this.opt.acceptMouseEvents) {
-      el.addEventListener('mouseenter', function (e) { console.log('asd'); e.target.style.border = '2px #aaa solid'; });
-      el.addEventListener('mouseleave', function (e) { e.target.style.border = 'unset'; });
-      el.addEventListener('click', function (e) {
-        console.log('asdasd');
-      });
-      el.classList.add('asdasd');
-    }
   };
 
   ctel.prototype.emitBottom = function (id, text, colour) {
