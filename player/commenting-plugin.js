@@ -70,6 +70,7 @@ var CommentCtrlPanel = function (_Component) {
       container: grpKara, value: "FFFFFF", mode: "HS", position: "left", hash: true,
       width: 120, height: 80, shadow: false, backgroundColor: 'transparent', borderWidth: 0
     });
+    this._picker = iptKara;
     grpKara.appendChild(iptKara);
     el.appendChild(grpKara);
 
@@ -209,7 +210,7 @@ function commentingPlugin (options) {
     }; }(menuEl)));
 
     sendBtn.on('click', (function (_panel, _textArea) { return function () {
-      var style = '#ffffff' + ';' + (_panel._sendAsBottom ? 'b' : 't');
+      var style = _panel._picker.textContent + ';' + (_panel._sendAsBottom ? 'b' : 't');
       var text = _textArea.value;
       if (text.trim().length === 0) return;
       _textArea.setAttribute('disabled', '');
