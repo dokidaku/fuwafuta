@@ -5,7 +5,9 @@
     opt.lineHeight = opt.lineHeight || 28;
     opt.width = opt.width || window.innerWidth || 1080;
     opt.height = opt.height || window.innerHeight || 720;
+    opt.acceptMouseEvents = !!(opt.acceptMouseEvents);
     opt.removeCallback = opt.removeCallback || undefined;
+    opt.timeoutCallback = opt.timeoutCallback || undefined;
     this.opt = opt;
     this._rowTSpareR = [];
     this._rowTSpareL = [];
@@ -60,7 +62,7 @@
     return el;
   };
 
-  ctel.prototype.emitTop = function (text, colour) {
+  ctel.prototype.emitTop = function (id, text, colour) {
     var el = this.createBullet(text, colour);
     // Abstractions
     var now = Date.now();
@@ -99,9 +101,18 @@
     }; }(this));
     el.addEventListener('transitionend', transitionEndCallback);
     el.addEventListener('webkitTransitionend', transitionEndCallback);
+    // Handle mouse events
+    if (this.opt.acceptMouseEvents) {
+      el.addEventListener('mouseenter', function (e) { console.log('asd'); e.target.style.border = '2px #aaa solid'; });
+      el.addEventListener('mouseleave', function (e) { e.target.style.border = 'unset'; });
+      el.addEventListener('click', function (e) {
+        console.log('asdasd');
+      });
+      el.classList.add('asdasd');
+    }
   };
 
-  ctel.prototype.emitBottom = function (text, colour) {
+  ctel.prototype.emitBottom = function (id, text, colour) {
     var el = this.createBullet(text, colour);
     // Abstractions
     var now = Date.now();
@@ -129,6 +140,14 @@
       _this._bulletsB.pop();
       _el.parentNode.removeChild(_el);
     }; }(this, el)), t);
+  };
+
+  ctel.prototype.handleMouseMove = function (x, y) {
+    console.log(x, y);
+  };
+
+  ctel.prototype.handleClick = function (x, y) {
+    console.log(x, y);
   };
 
   window.ctel = ctel;
