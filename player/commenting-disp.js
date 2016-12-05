@@ -5,7 +5,6 @@
     opt.lineHeight = opt.lineHeight || 28;
     opt.width = opt.width || window.innerWidth || 1080;
     opt.height = opt.height || window.innerHeight || 720;
-    opt.acceptMouseEvents = !!(opt.acceptMouseEvents);
     opt.removeCallback = opt.removeCallback || undefined;
     opt.timeoutCallback = opt.timeoutCallback || undefined;
     this.opt = opt;
@@ -92,6 +91,7 @@
     el.style.left = Math.round(x).toString() + 'px';
     el.style.top = Math.round(rowIdx * this.opt.lineHeight).toString() + 'px';
     el._arrId = this._bulletsT.push(el) - 1;
+    el._cancelled = false;
     setTimeout((function (_el, _x) { return function () {
       _el.style.left = _x.toString() + 'px';
     }; }(el, -el.clientWidth)), 25);
@@ -101,6 +101,9 @@
       _this._bulletsT[e.target._arrId]._arrId = e.target._arrId;
       _this._bulletsT.pop();
       e.target.parentNode.removeChild(e.target);
+      if (!e.target._cancelled && typeof _this.opt.timeoutCallback === 'function') {
+        _this.opt.timeoutCallback(e.target._cmtID);
+      }
     }; }(this));
     el.addEventListener('transitionend', transitionEndCallback);
     el.addEventListener('webkitTransitionend', transitionEndCallback);
@@ -137,11 +140,15 @@
     el.style.left = Math.round(x).toString() + 'px';
     el.style.top = Math.round(this.opt.height - (rowIdx + 1) * this.opt.lineHeight).toString() + 'px';
     el._arrId = this._bulletsB.push(el) - 1;
+    el._cancelled = false;
     setTimeout((function (_this, _el) { return function () {
       _this._bulletsB[_el._arrId] = _this._bulletsB[_this._bulletsB.length - 1];
       _this._bulletsB[_el._arrId]._arrId = _el._arrId;
       _this._bulletsB.pop();
       _el.parentNode.removeChild(_el);
+      if (!_el._cancelled && typeof _this.opt.timeoutCallback === 'function') {
+        _this.opt.timeoutCallback(_el._cmtID);
+      }
     }; }(this, el)), t);
   };
 
@@ -175,6 +182,10 @@
     var bullet = this.getBulletAt(x, y) || this._selBullet;
     if (!bullet) return;
     bullet.style.opacity = 0;
+    bullet._cancelled = true;
+    if (typeof this.opt.removeCallback === 'function') {
+      this.opt.removeCallback(bullet._cmtID);
+    }
   };
 
   window.ctel = ctel;

@@ -225,13 +225,19 @@ function commentingPlugin (options) {
     // Overlay
     player.ctel = new ctel({
       width: player.el().offsetWidth, height: player.el().offsetHeight,
-      acceptMouseEvents: options.isModerator
+      removeCallback: function (id) {
+        console.log('remove: ', id);
+      }, timeoutCallback: function (id) {
+        console.log('timeout: ', id);
+      }
     });
     player.addChild({ name: function () { return 'CommentingOverlay'; }, el: function () { return player.ctel.getEl(); } }, 0);
-    var videoTechEl = player.el().childNodes[0];
-    if (videoTechEl.tagName.toUpperCase() !== 'VIDEO') document.getElementsByTagName('video')[0];
-    player.on('mousemove', (function (__targ, __ovl, __el) { return function (e) { if (e.target == __targ) __ovl.handleMouseMove(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
-    player.on('click', (function (__targ, __ovl, __el) { return function (e) { if (e.target == __targ) __ovl.handleClick(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
+    if (options.isModerator) {
+      var videoTechEl = player.el().childNodes[0];
+      if (videoTechEl.tagName.toUpperCase() !== 'VIDEO') document.getElementsByTagName('video')[0];
+      player.on('mousemove', (function (__targ, __ovl, __el) { return function (e) { if (e.target == __targ) __ovl.handleMouseMove(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
+      player.on('click', (function (__targ, __ovl, __el) { return function (e) { if (e.target == __targ) __ovl.handleClick(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
+    }
 
     // Connecting to socket
     var socket = io();
