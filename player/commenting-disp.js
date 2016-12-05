@@ -14,6 +14,7 @@
     this._rowBSpare = [];
     this._bulletsT = [];
     this._bulletsB = [];
+    this._selBullet = null;
     this.sayHello();
     this.initEl();
   };
@@ -49,9 +50,10 @@
     while (this._rowBSpare.length > cur_rows) this._rowBSpare.pop();
   };
 
-  ctel.prototype.createBullet = function (text, colour) {
+  ctel.prototype.createBullet = function (id, text, colour) {
     var el = window.document.createElement('div');
     this._el.appendChild(el);
+    el._cmtID = id;
     el.style.fontSize = '24px';
     el.style.color = colour || 'white';
     el.style.width = 'auto';
@@ -63,7 +65,7 @@
   };
 
   ctel.prototype.emitTop = function (id, text, colour) {
-    var el = this.createBullet(text, colour);
+    var el = this.createBullet(id, text, colour);
     // Abstractions
     var now = Date.now();
     var x = this.opt.width;
@@ -86,7 +88,7 @@
     this._rowTSpareR[rowIdx] = unblockR;
     this._rowTSpareL[rowIdx] = unblockL;
     // Styles
-    el.style.transition = 'left ' + Math.round(t / 1000).toString() + 's linear';
+    el.style.transition = 'left ' + Math.round(t / 1000).toString() + 's linear' + ', background-color 0.15s linear, opacity 0.15s linear';
     el.style.left = Math.round(x).toString() + 'px';
     el.style.top = Math.round(rowIdx * this.opt.lineHeight).toString() + 'px';
     el._arrId = this._bulletsT.push(el) - 1;
@@ -94,6 +96,7 @@
       _el.style.left = _x.toString() + 'px';
     }; }(el, -el.clientWidth)), 25);
     var transitionEndCallback = (function (_this) { return function (e) {
+      if (e.propertyName !== 'left') return;
       _this._bulletsT[e.target._arrId] = _this._bulletsT[_this._bulletsT.length - 1];
       _this._bulletsT[e.target._arrId]._arrId = e.target._arrId;
       _this._bulletsT.pop();
@@ -113,7 +116,7 @@
   };
 
   ctel.prototype.emitBottom = function (id, text, colour) {
-    var el = this.createBullet(text, colour);
+    var el = this.createBullet(id, text, colour);
     // Abstractions
     var now = Date.now();
     var x = (this.opt.width - el.clientWidth) / 2;
@@ -142,12 +145,36 @@
     }; }(this, el)), t);
   };
 
+  var inRect = function (x0, y0, x1, y1, w, h) {
+    return (x0 >= x1 && x0 <= x1 + w && y0 >= y1 && y0 <= y1 + h);
+  };
+  ctel.prototype.getBulletAt = function (x, y) {
+    for (var i = 0; i < this._bulletsT.length; ++i)
+      if (inRect(x, y, this._bulletsT[i].offsetLeft, this._bulletsT[i].offsetTop, this._bulletsT[i].clientWidth, this._bulletsT[i].clientHeight))
+        return this._bulletsT[i];
+    for (var i = 0; i < this._bulletsB.length; ++i)
+      if (inRect(x, y, this._bulletsB[i].offsetLeft, this._bulletsB[i].offsetTop, this._bulletsB[i].clientWidth, this._bulletsB[i].clientHeight))
+        return this._bulletsB[i];
+    return null;
+  };
+
   ctel.prototype.handleMouseMove = function (x, y) {
-    console.log(x, y);
+    var bullet = this.getBulletAt(x, y);
+    if (!bullet) {
+      if (this._selBullet) {
+        this._selBullet.style.background = 'none';
+        this._selBullet = null;
+      }
+    } else {
+      bullet.style.background = 'rgba(255, 255, 255, 0.4)';
+      this._selBullet = bullet;
+    }
   };
 
   ctel.prototype.handleClick = function (x, y) {
-    console.log(x, y);
+    var bullet = this.getBulletAt(x, y) || this._selBullet;
+    if (!bullet) return;
+    bullet.style.opacity = 0;
   };
 
   window.ctel = ctel;
