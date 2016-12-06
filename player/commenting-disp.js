@@ -2,9 +2,10 @@
   var ctel = function (opt) {
     if (!(this instanceof ctel)) return new ctel(opt);
     opt = opt || {};
-    opt.lineHeight = opt.lineHeight || 28;
     opt.width = opt.width || window.innerWidth || 1080;
     opt.height = opt.height || window.innerHeight || 720;
+    opt.lineHeight = opt.lineHeight || undefined;
+    opt.fontSize = opt.fontSize || undefined;
     opt.removeCallback = opt.removeCallback || undefined;
     opt.timeoutCallback = opt.timeoutCallback || undefined;
     this.opt = opt;
@@ -38,12 +39,14 @@
 
   ctel.prototype.getEl = function () { return this._el; };
 
+  ctel.prototype.getLineHeight = function () { return (this.opt.lineHeight || (this.opt.height * 1.2 / 24)); };
+
   ctel.prototype.updateSize = function (w, h) {
     this.opt.width = w || this.opt.width;
     this.opt.height = h || this.opt.height;
     this._el.style.width = this.opt.width.toString() + 'px';
     this._el.style.height = this.opt.height.toString() + 'px';
-    var cur_rows = Math.floor(this.opt.height / this.opt.lineHeight);
+    var cur_rows = Math.floor(this.opt.height / this.getLineHeight());
     while (this._rowTSpareR.length < cur_rows) this._rowTSpareR.push(-1);
     while (this._rowTSpareL.length < cur_rows) this._rowTSpareL.push(-1);
     while (this._rowBSpare.length < cur_rows) this._rowBSpare.push(-1);
@@ -56,7 +59,7 @@
     var el = window.document.createElement('div');
     this._el.appendChild(el);
     el._cmtID = id;
-    el.style.fontSize = '24px';
+    el.style.fontSize = this.opt.fontSize || (Math.round(this.opt.height / 24).toString() + 'px');
     el.style.color = colour || 'white';
     el.style.width = 'auto';
     el.style.whiteSpace = 'nowrap'; // for handling whitespaces; see http://stackoverflow.com/questions/118241/
@@ -94,7 +97,7 @@
     // Styles
     el.style.transition += ', left ' + Math.round(t / 1000).toString() + 's linear';
     el.style.left = Math.round(x).toString() + 'px';
-    el.style.top = Math.round(rowIdx * this.opt.lineHeight + 6).toString() + 'px';
+    el.style.top = Math.round(rowIdx * this.getLineHeight() + 6).toString() + 'px';
     el._arrId = this._bulletsT.push(el) - 1;
     el._cancelled = false;
     setTimeout((function (_el, _x) { return function () {
@@ -135,7 +138,7 @@
     // Styles
     el.style.left = Math.round(x).toString() + 'px';
     el.style.top = '';
-    el.style.bottom = Math.round(rowIdx * this.opt.lineHeight + 6).toString() + 'px';
+    el.style.bottom = Math.round(rowIdx * this.getLineHeight() + 6).toString() + 'px';
     el._arrId = this._bulletsB.push(el) - 1;
     el._cancelled = false;
     setTimeout((function (_this, _el) { return function () {
