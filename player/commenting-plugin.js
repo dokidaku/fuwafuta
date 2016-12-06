@@ -234,6 +234,9 @@ function commentingPlugin (options) {
     sendBtn.addClass('vjs-icon-circle-inner-circle');
     sendBtn.el().setAttribute('title', 'Send');
     player.controlBar.el().insertBefore(sendBtn.el(), fscrCtrl);
+    textArea.addEventListener('keypress', (function (_sendBtn) { return function (e) {
+      if (e.keyCode == 13) _sendBtn.click();
+    }; }(sendBtn.el())));
 
     var cmtDispBtn = new CommentCtrlPopupBtn(this);
     cmtDispBtn.addClass('vjs-icon-subtitles');
