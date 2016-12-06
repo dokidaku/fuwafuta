@@ -13,6 +13,8 @@
     this._rowBSpare = [];
     this._bulletsT = [];
     this._bulletsB = [];
+    this._showT = true;
+    this._showB = true;
     this._selBullet = null;
     this.sayHello();
     this.initEl();
@@ -49,7 +51,7 @@
     while (this._rowBSpare.length > cur_rows) this._rowBSpare.pop();
   };
 
-  ctel.prototype.createBullet = function (id, text, colour) {
+  ctel.prototype.createBullet = function (id, text, colour, isShown) {
     var el = window.document.createElement('div');
     this._el.appendChild(el);
     el._cmtID = id;
@@ -60,11 +62,13 @@
     el.textContent = text;
     el.style.position = 'absolute';
     el.style.pointerEvents = 'none';
+    el.style.opacity = isShown ? 1 : 0;
+    el.style.transition = 'opacity 0.15s linear, background-color 0.15s linear';
     return el;
   };
 
   ctel.prototype.emitTop = function (id, text, colour) {
-    var el = this.createBullet(id, text, colour);
+    var el = this.createBullet(id, text, colour, this._showT);
     // Abstractions
     var now = Date.now();
     var x = this.opt.width;
@@ -87,7 +91,7 @@
     this._rowTSpareR[rowIdx] = unblockR;
     this._rowTSpareL[rowIdx] = unblockL;
     // Styles
-    el.style.transition = 'left ' + Math.round(t / 1000).toString() + 's linear' + ', background-color 0.15s linear, opacity 0.15s linear';
+    el.style.transition += ', left ' + Math.round(t / 1000).toString() + 's linear';
     el.style.left = Math.round(x).toString() + 'px';
     el.style.top = Math.round(rowIdx * this.opt.lineHeight).toString() + 'px';
     el._arrId = this._bulletsT.push(el) - 1;
@@ -110,7 +114,7 @@
   };
 
   ctel.prototype.emitBottom = function (id, text, colour) {
-    var el = this.createBullet(id, text, colour);
+    var el = this.createBullet(id, text, colour, this._showB);
     // Abstractions
     var now = Date.now();
     var x = (this.opt.width - el.clientWidth) / 2;
@@ -141,6 +145,17 @@
         _this.opt.timeoutCallback(_el._cmtID);
       }
     }; }(this, el)), t);
+  };
+
+  ctel.prototype.updateTopDisp = function (isShown) {
+    this._showT = isShown;
+    for (var i = 0; i < this._bulletsT.length; ++i)
+      this._bulletsT[i].style.opacity = isShown ? 1 : 0;
+  };
+  ctel.prototype.updateBottomDisp = function (isShown) {
+    this._showB = isShown;
+    for (var i = 0; i < this._bulletsB.length; ++i)
+      this._bulletsB[i].style.opacity = isShown ? 1 : 0;
   };
 
   var inRect = function (x0, y0, x1, y1, w, h) {

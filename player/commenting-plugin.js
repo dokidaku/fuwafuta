@@ -92,9 +92,10 @@ var CommentCtrlPanel = function (_Component) {
     txtTop.textContent = 'Top';
     grpTop.appendChild(txtTop);
     var btnTop = new ToggleButton();
-    btnTop.on('toggle', function (e, isOn) {
-      console.log('TOP: ' + isOn);
-    });
+    btnTop.on('toggle', (function (_this) { return function (e, isOn) {
+      if (typeof _this.updateTopDisp === 'function') _this.updateTopDisp(isOn);
+    }; }(this)));
+    btnTop.manualToggle();
     grpTop.appendChild(btnTop.el());
     el.appendChild(grpTop);
 
@@ -104,9 +105,10 @@ var CommentCtrlPanel = function (_Component) {
     txtBottom.textContent = 'Bottom';
     grpBottom.appendChild(txtBottom);
     var btnBottom = new ToggleButton();
-    btnBottom.on('toggle', function (e, isOn) {
-      console.log('BTM: ' + isOn);
-    });
+    btnBottom.on('toggle', (function (_this) { return function (e, isOn) {
+      if (typeof _this.updateBottomDisp === 'function') _this.updateBottomDisp(isOn);
+    }; }(this)));
+    btnBottom.manualToggle();
     grpBottom.appendChild(btnBottom.el());
     el.appendChild(grpBottom);
 
@@ -128,7 +130,6 @@ var CommentCtrlPanel = function (_Component) {
       }; }(e.target))
       xhr.open('POST', '/set_filtration/' + (isOn ? '1' : '0'), true);
       xhr.send();
-      console.log('FLT: ' + isOn);
     });
     grpFiltration.appendChild(btnFiltration.el());
     el.appendChild(grpFiltration);
@@ -236,6 +237,8 @@ function commentingPlugin (options) {
     cmtDispBtn.addClass('vjs-icon-subtitles');
     cmtDispBtn.el().setAttribute('title', 'Comments Settings');
     player.controlBar.el().insertBefore(cmtDispBtn.el(), fscrCtrl);
+    cmtDispBtn.panel.updateTopDisp = (function (_ctel) { return function (isOn) { _ctel.updateTopDisp(isOn); }; }(player.ctel));
+    cmtDispBtn.panel.updateBottomDisp = (function (_ctel) { return function (isOn) { _ctel.updateBottomDisp(isOn); }; }(player.ctel));
     
     var menuBtn = document.getElementsByClassName('vjs-cmt-popupbtn')[0];
     var menuEl = menuBtn.childNodes[0];
