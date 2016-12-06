@@ -192,17 +192,18 @@ function commentingPlugin (options) {
     });
 
     // Overlay
+    var ctrlBarHeight = document.getElementsByClassName('vjs-control-bar')[0].clientHeight;
     player.ctel = new ctel({
-      width: player.el().offsetWidth, height: player.el().offsetHeight - 40,
+      width: player.el().offsetWidth, height: player.el().offsetHeight - ctrlBarHeight,
       removeCallback: function (id) {
         socket.emit('overrule', id);
       }, timeoutCallback: function (id) {
         socket.emit('approve', id);
       }
     });
-    var cuddlyTgUpdSize = (function (_player, _ctel) { return function () {
-      _ctel.updateSize(player.el().offsetWidth, player.el().offsetHeight - (_player.userActive() ? 40 : 0));
-    }; }(player, player.ctel));
+    var cuddlyTgUpdSize = (function (_player, _ctel, _ctrlBarHeight) { return function () {
+      _ctel.updateSize(player.el().offsetWidth, player.el().offsetHeight - (_player.userActive() ? _ctrlBarHeight : 0));
+    }; }(player, player.ctel, ctrlBarHeight));
     player.on('resize', cuddlyTgUpdSize);
     player.on('fullscreenchange', function () { setTimeout(cuddlyTgUpdSize, 500); });
     player.on('useractive', cuddlyTgUpdSize);
@@ -213,6 +214,7 @@ function commentingPlugin (options) {
       if (videoTechEl.tagName.toUpperCase() !== 'VIDEO') document.getElementsByTagName('video')[0];
       player.on('mousemove', (function (__targ, __ovl, __el) { return function (e) { __ovl.handleMouseMove(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
       player.on('click', (function (__targ, __ovl, __el) { return function (e) { __ovl.handleClick(e.offsetX, e.offsetY); }; }(videoTechEl, player.ctel, player.ctel.getEl())));
+      player.on('pause', function () { this.play(); });
     }
 
     // Other controls

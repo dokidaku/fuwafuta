@@ -32,6 +32,7 @@
     this._el.style.pointerEvents = 'none';
     this._el.style.background = 'none';
     this._el.style.overflow = 'hidden';
+    this._el.style.transition = 'width 500ms cubic-bezier(0.215, 0.610, 0.355, 1), height 200ms cubic-bezier(0.215, 0.610, 0.355, 1)';
     this.updateSize();
   };
 
@@ -93,7 +94,7 @@
     // Styles
     el.style.transition += ', left ' + Math.round(t / 1000).toString() + 's linear';
     el.style.left = Math.round(x).toString() + 'px';
-    el.style.top = Math.round(rowIdx * this.opt.lineHeight).toString() + 'px';
+    el.style.top = Math.round(rowIdx * this.opt.lineHeight + 6).toString() + 'px';
     el._arrId = this._bulletsT.push(el) - 1;
     el._cancelled = false;
     setTimeout((function (_el, _x) { return function () {
@@ -133,7 +134,8 @@
     this._rowBSpare[rowIdx] = unblock;
     // Styles
     el.style.left = Math.round(x).toString() + 'px';
-    el.style.top = Math.round(this.opt.height - (rowIdx + 1) * this.opt.lineHeight).toString() + 'px';
+    el.style.top = '';
+    el.style.bottom = Math.round(rowIdx * this.opt.lineHeight + 6).toString() + 'px';
     el._arrId = this._bulletsB.push(el) - 1;
     el._cancelled = false;
     setTimeout((function (_this, _el) { return function () {
