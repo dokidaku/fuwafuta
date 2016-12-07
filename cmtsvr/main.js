@@ -264,3 +264,9 @@ io.on('connection', async (socket) => {
 server.listen(6033, () => {
   console.log('Up at http://127.0.0.1:6033/ (/=w=)~')
 })
+
+module.exports = {
+  createClient: createClient,
+  createClientWithID: createClientWithID,
+  reassignClient: reassignClient
+}

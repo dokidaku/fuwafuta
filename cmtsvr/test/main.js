@@ -1,16 +1,25 @@
-const foo = async (x) => x + 1
 const assert = require('assert')
+const redis = new require('ioredis')()
 
-describe('Synchronous tests', () => {
-  it('should work', () => {
-    const x = 3 + 1
-    assert.equal(x, 4)
-  })
-})
+const api = require('../main')
 
-describe('Asynchronous tests', () => {
-  it('should work', async () => {
-    const x = await foo(3)
-    assert.equal(x, 4)
+redis.flushall(() => run())
+
+describe('API Level', function () {
+  describe('User management', function () {
+    it('#createClient() should work with random ID', async function () {
+      const uid = api.createClient(2)
+      assert.equal(await redis.hget('client:' + uid, 'role'), 2)
+    })
+    it('#createClient() should work with given ID', async function () {
+      const uid = api.createClientWithID('Orz~ Orz', 2)
+      assert.strictEqual(uid, 'Orz~ Orz')
+      assert.equal(await redis.hget('client:' + uid, 'role'), 2)
+    })
+    it('#reassignClient() should work', async function () {
+      const uid = 'Orz~ Orz'
+      await api.reassignClient(uid, 3)
+      assert.equal(await redis.hget('client:' + uid, 'role'), 3)
+    })
   })
 })
