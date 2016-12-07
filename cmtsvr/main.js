@@ -100,22 +100,31 @@ const createClientWithID = (new_uid, role) => {
 const createClient = (role) => createClientWithID(uuid(), role)
 
 const loginClient = async (uid) => {
+  if (typeof uid !== 'string') return false
   const prev_role = await redis.hget('client:' + uid, 'role')
+  if (prev_role === null) return false
   redis.sadd('group:' + prev_role, uid)
+  return true
 }
 
 const reassignClient = async (uid, new_role) => {
+  if (typeof uid !== 'string') return false
   const prev_role = await redis.hget('client:' + uid, 'role')
+  if (prev_role === null) return false
   await redis.multi()
     .hset('client:' + uid, 'role', new_role)
     .srem('group:' + prev_role, uid)
     .sadd('group:' + new_role, uid)
     .exec()
+  return true
 }
 
 const logoutClient = async (uid) => {
+  if (typeof uid !== 'string') return false
   const prev_role = await redis.hget('client:' + uid, 'role')
+  if (prev_role === null) return false
   redis.srem('group:' + prev_role, uid)
+  return true
 }
 
 const logoutAllClients = () => {
