@@ -1,4 +1,5 @@
 const assert = require('assert')
+const request = require('request')
 const redis = new require('ioredis')()
 
 const api = require('../main')
@@ -77,6 +78,41 @@ describe('API Level', function () {
       assert.strictEqual(await api.logoutClient('qwelk'), false)
       assert.strictEqual(await api.logoutClient(1317), false)
       assert.strictEqual(await api.logoutClient({ message: 'Catch Me If You Can' }), false)
+    })
+  })
+})
+
+describe('HTTP Level', function () {
+  describe('Session management', function () {
+    it('should set a cookie for a new visitor', function () {
+      this.skip()
+    })
+    it('should set role of the newcomer to be 1 (HTML_RESTRAINED)', function () {
+      this.skip()
+    })
+    it('should update the role correctly after a successful verification', function () {
+      this.skip()
+    })
+    it('should report and keep database state after a failed verification', function () {
+      this.skip()
+    })
+    it('should make `/get_filtration` work', function () {
+      this.skip()
+    })
+    it('should make `/set_filtration/<is_restrained>` work', function () {
+      this.skip()
+    })
+    it('should complain `/set_filtration/<is_restrained>` uses on non-HTML clients', function () {
+      this.skip()
+    })
+    it('should make `/new_client` work', function () {
+      this.skip()
+    })
+    it('should make `/new_comment` work', function () {
+      this.skip()
+    })
+    it('should complain `/new_client` and `/new_comment` uses on non-IM clients', function () {
+      this.skip()
     })
   })
 })
