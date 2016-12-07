@@ -20,6 +20,15 @@ describe('API Level', function () {
       api.createClientWithID('YesYes', 3)
       assert.equal(await redis.hget('client:' + 'YesYes', 'role'), 3)
     })
+    it('should have #createClient() complain with non-printable characters', function () {
+      assert.strictEqual(api.createClientWithID('\x20\x20\x08\x7f\x81\x20\xa0', 1), null)
+    })
+    it('should have #createClient() complain with empty strings and non-strings', async function () {
+      assert.strictEqual(api.createClientWithID('', 1), null)
+      assert.strictEqual(api.createClientWithID(998244353, 2), null)
+      assert.strictEqual(api.createClientWithID({ message: 'nyan' }, 3), null)
+      assert.equal(await redis.exists('client:'), 0)
+    })
     it('should have lists `group:<role>` created by #loginClient()', async function () {
       await api.loginClient(rand_uid)
       await api.loginClient('Orz~ Orz')

@@ -92,6 +92,8 @@ const scoreComment = async (cid, uid, score) => {
 }
 
 const createClientWithID = (new_uid, role) => {
+  if (typeof new_uid !== 'string' || new_uid.length <= 0) return null
+  for (var i = 0; i < new_uid.length; ++i) if (new_uid.charCodeAt(i) < 32 || new_uid.charCodeAt(i) > 127) return null
   redis.hmset('client:' + new_uid, 'created', Date.now(), 'role', role == null ? role_cfg.IGNORANT : role)
   return new_uid
 }
