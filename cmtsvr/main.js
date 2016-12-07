@@ -268,5 +268,8 @@ server.listen(6033, () => {
 module.exports = {
   createClient: createClient,
   createClientWithID: createClientWithID,
-  reassignClient: reassignClient
+  reassignClient: reassignClient,
+  loginClient: loginClient,
+  logoutClient: logoutClient,
+  logoutAllClients: logoutAllClients
 }
