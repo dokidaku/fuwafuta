@@ -2,7 +2,6 @@ const Koa = require('koa')
 const app = new Koa()
 
 const send = require('koa-send')
-const cors = require('kcors')
 const bodyParser = require('koa-body')()
 
 const Router = require('koa-better-router')
@@ -278,8 +277,9 @@ io.on('connection', async (socket) => {
   })(socket))
 })
 
-server.listen(6033, () => {
-  console.log('Up at http://127.0.0.1:6033/ (/=w=)~')
+const port = process.env.PORT || 6033
+server.listen(port, () => {
+  console.log(`Up at http://127.0.0.1:${port}/ (/=w=)~`)
 })
 
 module.exports = {

@@ -22,6 +22,7 @@ Yet another thorough solution to live performances with instant comments.
 
 * `http://<ip>:6033/*` will be the commenting API server.
 * `http://<ip>:6033/player/*` will be the player's static file server.
+* The ports above can be specified with the `$PORT` environment variable, for instance run `PORT=8080 npm start`.
 * The default HLS stream to play is `http://localhost:6060/master.m3u8`.
     - Can be changed at [`player/play.html`](player/play.html).
     - Can be tested with [`HLS Endless`](https://github.com/dayvson/hls-endless).
@@ -57,6 +58,6 @@ Body sample: `uid=d41d8cd98f00b204e9800998ecf8427e&text=Hello+World&attr=#ffffff
 
 * ~~Remove `/new_client` and handle regstration internally~~ (Done)
 * ~~Test the IM APIs~~ (Done)
-* Use an environment variable to decide the port to listen on
+* ~~Use an environment variable to decide the port to listen on~~ (Done)
 * Folder structure refactoring
 * WeChat integration
