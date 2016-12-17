@@ -1,10 +1,14 @@
 const assert = require('assert')
-const request = require('request')
+const _request = require('request')
+var jar = _request.jar()
+const request = _request.defaults({jar: jar})
 const redis = new require('ioredis')()
 
 const api = require('../main')
 
 redis.flushall(() => run())
+
+const domain = 'http://127.0.0.1:6033'
 
 describe('API Level', function () {
   describe('User management', function () {
@@ -84,17 +88,36 @@ describe('API Level', function () {
 
 describe('HTTP Level', function () {
   describe('Session management', function () {
-    it('should set a cookie for a new visitor', function () {
-      this.skip()
+    var uid = ''
+    it('should set a random cookie for a new visitor', function (done) {
+      request.get(domain + '/player/play.html', (err, resp) => {
+        assert.strictEqual(jar.getCookies(domain)[0].key, 'auth')
+        assert.strictEqual(jar.getCookies(domain)[0].value.length, 36)
+        uid = jar.getCookies(domain)[0].value
+        done()
+      })
     })
-    it('should set role of the newcomer to be 1 (HTML_RESTRAINED)', function () {
-      this.skip()
+    it('should set role of the newcomer to be 1 (HTML_RESTRAINED)', async function () {
+      const role = await redis.hget('client:' + uid, 'role')
+      assert.equal(role, 1)
     })
-    it('should update the role correctly after a successful verification', function () {
-      this.skip()
+    it('should update the role correctly after a successful verification', function (done) {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'nodnod985661441' }, async (err, resp, body) => {
+        assert.strictEqual(body.substr(0, 7), 'Success')
+        assert.equal(await redis.hget('client:' + uid, 'role'), 2)
+        request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'cfcf1000000007' }, async (err, resp, body) => {
+          assert.strictEqual(body.substr(0, 7), 'Success')
+          assert.equal(await redis.hget('client:' + uid, 'role'), 4)
+          done()
+        })
+      })
     })
-    it('should report and keep database state after a failed verification', function () {
-      this.skip()
+    it('should report and keep database state after a failed verification', function (done) {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'bluh bluh' }, async (err, resp, body) => {
+        assert.strictEqual(body.substr(0, 2), 'No')
+        assert.equal(await redis.hget('client:' + uid, 'role'), 4)
+        done()
+      })
     })
     it('should make `/get_filtration` work', function () {
       this.skip()
@@ -105,10 +128,12 @@ describe('HTTP Level', function () {
     it('should complain `/set_filtration/<is_restrained>` uses on non-HTML clients', function () {
       this.skip()
     })
-    it('should make `/new_client` work', function () {
+  })
+  describe('IM server', function () {
+    it('should make `/new_comment` work', function () {
       this.skip()
     })
-    it('should make `/new_comment` work', function () {
+    it('should make `/new_comment` work with existing clients', function () {
       this.skip()
     })
     it('should complain `/new_client` and `/new_comment` uses on non-IM clients', function () {
