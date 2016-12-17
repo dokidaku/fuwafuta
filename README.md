@@ -55,7 +55,7 @@ Body sample: `uid=d41d8cd98f00b204e9800998ecf8427e&text=Hello+World&attr=#ffffff
 
 ## TODO
 
-* Remove `/new_client` and handle regstration internally
+* ~~Remove `/new_client` and handle regstration internally~~ (Done)
 * Test the IM APIs
 * Use an environment variable to decide the port to listen on
 * Folder structure refactoring

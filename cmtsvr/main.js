@@ -98,6 +98,9 @@ const createClientWithID = (new_uid, role) => {
   return new_uid
 }
 const createClient = (role) => createClientWithID(uuid(), role)
+const ensureClientWithID = async (uid, role) => {
+  if (await redis.exists(uid) == 0) createClientWithID(uid, role)
+}
 
 const loginClient = async (uid) => {
   if (typeof uid !== 'string') return false
@@ -208,16 +211,10 @@ router.post('/verify', checkCookies(null), bodyParser, async (ctx, next) => {
   return next()
 })
 
-router.post('/new_client', checkCookies(role_cfg.IMSERVER), bodyParser, async (ctx, next) => {
-  const reqbody = ctx.request.body
-  if (reqbody.uid_sub == null) return ctx.status = 400
-  createClientWithID(clientID(ctx))
-  ctx.body = 'Success ♪( ´▽｀)'
-})
-
 router.post('/new_comment', checkCookies(role_cfg.IMSERVER), bodyParser, async (ctx, next) => {
   const reqbody = ctx.request.body
   if (reqbody.uid_sub == null || reqbody.text == null || reqbody.attr == null) return ctx.status = 400
+  await ensureClientWithID(clientID(ctx))
   await createComment(clientID(ctx), reqbody.text, reqbody.attr)
   ctx.body = 'Success ♪( ´▽｀)'
 })
