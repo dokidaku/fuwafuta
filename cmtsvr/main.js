@@ -2,6 +2,7 @@ const Koa = require('koa')
 const app = new Koa()
 
 const send = require('koa-send')
+const cors = require('kcors')
 const bodyParser = require('koa-body')()
 
 const Router = require('koa-better-router')
@@ -27,6 +28,10 @@ const redis = new Redis()
 const cookie = require('cookie')
 const uuid = require('uuid')
 
+app.use(async (ctx, next) => {
+  ctx.response.set('Access-Control-Allow-Origin', '*')
+  await next()
+})
 app.use(router.middleware())
 
 const pass_cfg = {
