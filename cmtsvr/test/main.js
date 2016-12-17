@@ -102,10 +102,10 @@ describe('HTTP Level', function () {
       assert.equal(role, 1)
     })
     it('should update the role correctly after a successful verification', function (done) {
-      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'nodnod985661441' }, async (err, resp, body) => {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'nodnod985661441' }, async (err, resp, body) => {
         assert.strictEqual(body.substr(0, 7), 'Success')
         assert.equal(await redis.hget('client:' + uid, 'role'), 2)
-        request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'cfcf1000000007' }, async (err, resp, body) => {
+        request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'cfcf1000000007' }, async (err, resp, body) => {
           assert.strictEqual(body.substr(0, 7), 'Success')
           assert.equal(await redis.hget('client:' + uid, 'role'), 4)
           done()
@@ -113,20 +113,48 @@ describe('HTTP Level', function () {
       })
     })
     it('should report and keep database state after a failed verification', function (done) {
-      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'bluh bluh' }, async (err, resp, body) => {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'bluh bluh' }, async (err, resp, body) => {
         assert.strictEqual(body.substr(0, 2), 'No')
         assert.equal(await redis.hget('client:' + uid, 'role'), 4)
         done()
       })
     })
-    it('should make `/get_filtration` work', function () {
-      this.skip()
+    it('should refresh client ID on invalidation', function (done) {
+      jar.setCookie('auth=ThisAuthCertainlyDoesntExistXD', domain)
+      request.get(domain + '/player/play.html', (err, resp) => {
+        var new_uid = jar.getCookies(domain)[0].value
+        assert.notEqual(uid, new_uid)
+        done()
+      })
     })
-    it('should make `/set_filtration/<is_restrained>` work', function () {
-      this.skip()
+    it('should make `/get_filtration` work', function (done) {
+      request.get(domain + '/get_filtration', (err, resp, body) => {
+        assert.equal(body, '1')
+        done()
+      })
     })
-    it('should complain `/set_filtration/<is_restrained>` uses on non-HTML clients', function () {
-      this.skip()
+    it('should make `/set_filtration/<is_restrained>` work', function (done) {
+      request.post(domain + '/set_filtration/0', (err, resp, body) => {
+        assert.equal(body.substr(0, 7), 'Success')
+        request.get(domain + '/get_filtration', (err, resp, body) => {
+          assert.equal(body, '0')
+          request.post(domain + '/set_filtration/1', (err, resp, body) => {
+            assert.equal(body.substr(0, 7), 'Success')
+            request.get(domain + '/get_filtration', (err, resp, body) => {
+              assert.equal(body, '1')
+              done()
+            })
+          })
+        })
+      })
+    })
+    it('should complain `/set_filtration/<is_restrained>` uses on non-HTML clients', function (done) {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'nodnod985661441' }, async () => {
+        request.post(domain + '/set_filtration/0', (err, resp) => {
+          assert.equal(resp.statusCode, 403)
+          done()
+        })
+      })
     })
   })
   describe('IM server', function () {
