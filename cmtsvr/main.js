@@ -51,6 +51,9 @@ const approveComment = async (cid) => {
 }
 
 const createComment = async (uid, text, attr) => {
+  // Validation
+  if (!text || !attr) return false
+  if (attr.length > 20 || (attr.substr(-2) !== ';t' && attr.substr(-2) !== ';b')) return false
   // Add to the database
   console.log(`From ${uid}: ${text} / ${attr}`)
   const cid = await redis.incr('cmt_count')
@@ -69,6 +72,7 @@ const createComment = async (uid, text, attr) => {
   if (jury.length == 0) {
     await approveComment(cid)
   }
+  return true
 }
 
 const wrapupInterval = 10000;
@@ -279,5 +283,7 @@ module.exports = {
   reassignClient: reassignClient,
   loginClient: loginClient,
   logoutClient: logoutClient,
-  logoutAllClients: logoutAllClients
+  logoutAllClients: logoutAllClients,
+
+  createComment: createComment
 }

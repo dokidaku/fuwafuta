@@ -84,6 +84,23 @@ describe('API Level', function () {
       assert.strictEqual(await api.logoutClient({ message: 'Catch Me If You Can' }), false)
     })
   })
+  describe('Comment management', function () {
+    it('should have #createComment() working correctly', async function () {
+      assert.strictEqual(await api.createComment('YesYes', 'Lorem ipsum dolor sit amet', '#fff;b'), true)
+      assert.strictEqual(await api.createComment('YesYes', 'Lorem ipsum dolor sit amet', 'magenta;t'), true)
+    })
+    it('should complain #createComment() with invalid arguments', async function () {
+      assert.strictEqual(await api.createComment('YesYes'), false)
+      assert.strictEqual(await api.createComment('YesYes', 123), false)
+      assert.strictEqual(await api.createComment('YesYes', 'What'), false)
+    })
+    it('should complain #createComment() with invalid attributes', async function () {
+      assert.strictEqual(await api.createComment('YesYes', 'What', "No semicolon :)"), false)
+      assert.strictEqual(await api.createComment('YesYes', 'What', "I am sooooo long a colour :);t"), false)
+      assert.strictEqual(await api.createComment('YesYes', 'What', "black;d"), false)
+      assert.strictEqual(await api.createComment('YesYes', 'What', "black;T"), false)
+    })
+  })
 })
 
 describe('HTTP Level', function () {
@@ -158,7 +175,7 @@ describe('HTTP Level', function () {
     })
   })
   describe('IM server', function () {
-    it('should make `/new_comment` work', function (done) {
+    it('should work with new sub-clients', function (done) {
       request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World!', attr: '#fff;t' } }, (err, resp, body) => {
         assert.equal(body.substr(0, 7), 'Success')
         request.post(domain + '/new_comment', { form: { uid_sub: 'ClientTwo', text: 'Lorem ipsum!', attr: '#fff;t' } }, (err, resp, body) => {
@@ -167,13 +184,13 @@ describe('HTTP Level', function () {
         })
       })
     })
-    it('should make `/new_comment` work with existing clients', function (done) {
+    it('should work with existing sub-clients', function (done) {
       request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World Again!', attr: '#eee;b' } }, (err, resp, body) => {
         assert.equal(body.substr(0, 7), 'Success')
         done()
       })
     })
-    it('should complain `/new_client` and `/new_comment` uses on non-IM clients', function (done) {
+    it('should complain uses on non-IM clients', function (done) {
       request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'uojuoj998244353' }, () => {
         request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World Once More!', attr: '#eee;b' } }, (err, resp) => {
           assert.equal(resp.statusCode, 403)
