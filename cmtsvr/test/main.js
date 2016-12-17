@@ -149,7 +149,7 @@ describe('HTTP Level', function () {
       })
     })
     it('should complain `/set_filtration/<is_restrained>` uses on non-HTML clients', function (done) {
-      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'nodnod985661441' }, async () => {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'cfcf1000000007' }, () => {
         request.post(domain + '/set_filtration/0', (err, resp) => {
           assert.equal(resp.statusCode, 403)
           done()
@@ -158,14 +158,28 @@ describe('HTTP Level', function () {
     })
   })
   describe('IM server', function () {
-    it('should make `/new_comment` work', function () {
-      this.skip()
+    it('should make `/new_comment` work', function (done) {
+      request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World!', attr: '#fff;t' } }, (err, resp, body) => {
+        assert.equal(body.substr(0, 7), 'Success')
+        request.post(domain + '/new_comment', { form: { uid_sub: 'ClientTwo', text: 'Lorem ipsum!', attr: '#fff;t' } }, (err, resp, body) => {
+          assert.equal(body.substr(0, 7), 'Success')
+          done()
+        })
+      })
     })
-    it('should make `/new_comment` work with existing clients', function () {
-      this.skip()
+    it('should make `/new_comment` work with existing clients', function (done) {
+      request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World Again!', attr: '#eee;b' } }, (err, resp, body) => {
+        assert.equal(body.substr(0, 7), 'Success')
+        done()
+      })
     })
-    it('should complain `/new_client` and `/new_comment` uses on non-IM clients', function () {
-      this.skip()
+    it('should complain `/new_client` and `/new_comment` uses on non-IM clients', function (done) {
+      request.post(domain + '/verify', { headers: { 'Content-Type': 'text/plain' }, body: 'uojuoj998244353' }, () => {
+        request.post(domain + '/new_comment', { form: { uid_sub: 'ClientOne', text: 'Hello World Once More!', attr: '#eee;b' } }, (err, resp) => {
+          assert.equal(resp.statusCode, 403)
+          done()
+        })
+      })
     })
   })
 })
