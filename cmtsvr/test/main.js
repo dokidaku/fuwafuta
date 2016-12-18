@@ -110,8 +110,13 @@ describe('API Level', function () {
       this.slow(5300);
       this.timeout(7000);
       setTimeout(async () => {
-        assert.strictEqual(await api.createComment('YesYes9', 'Consectetur adipiscing elit', 'magenta;t'), true)
-        assert.strictEqual(await api.createComment('YesYes9', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', 'magenta;t'), false)
+        try {
+          assert.strictEqual(await api.createComment('YesYes9', 'Consectetur adipiscing elit', 'magenta;t'), true)
+          assert.strictEqual(await api.createComment('YesYes9', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', 'magenta;t'), false)
+        } catch (e) {
+          done(e)
+          return
+        }
         done()
       }, 5010)
     })
