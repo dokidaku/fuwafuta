@@ -58,6 +58,8 @@ const createComment = async (uid, text, attr) => {
   // Validation
   if (!text || !attr) return false
   if (attr.length > 20 || (attr.substr(-2) !== ';t' && attr.substr(-2) !== ';b')) return false
+  // Density check
+  if (!(await redis.set('cooldown:' + uid, 1, 'EX', 5, 'NX'))) return false
   // Add to the database
   console.log(`From ${uid}: ${text} / ${attr}`)
   const cid = await redis.incr('cmt_count')

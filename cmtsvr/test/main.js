@@ -87,18 +87,33 @@ describe('API Level', function () {
   describe('Comment management', function () {
     it('should have #createComment() working correctly', async function () {
       assert.strictEqual(await api.createComment('YesYes', 'Lorem ipsum dolor sit amet', '#fff;b'), true)
-      assert.strictEqual(await api.createComment('YesYes', 'Lorem ipsum dolor sit amet', 'magenta;t'), true)
+      assert.strictEqual(await api.createComment('YesYes1', 'Lorem ipsum dolor sit amet', 'magenta;t'), true)
     })
     it('should complain #createComment() with invalid arguments', async function () {
-      assert.strictEqual(await api.createComment('YesYes'), false)
-      assert.strictEqual(await api.createComment('YesYes', 123), false)
-      assert.strictEqual(await api.createComment('YesYes', 'What'), false)
+      assert.strictEqual(await api.createComment('YesYes2'), false)
+      assert.strictEqual(await api.createComment('YesYes3', 123), false)
+      assert.strictEqual(await api.createComment('YesYes4', 'What'), false)
     })
     it('should complain #createComment() with invalid attributes', async function () {
-      assert.strictEqual(await api.createComment('YesYes', 'What', "No semicolon :)"), false)
-      assert.strictEqual(await api.createComment('YesYes', 'What', "I am sooooo long a colour :);t"), false)
-      assert.strictEqual(await api.createComment('YesYes', 'What', "black;d"), false)
-      assert.strictEqual(await api.createComment('YesYes', 'What', "black;T"), false)
+      assert.strictEqual(await api.createComment('YesYes5', 'What', "No semicolon :)"), false)
+      assert.strictEqual(await api.createComment('YesYes6', 'What', "I am sooooo long a colour :);t"), false)
+      assert.strictEqual(await api.createComment('YesYes7', 'What', "black;d"), false)
+      assert.strictEqual(await api.createComment('YesYes8', 'What', "black;T"), false)
+    })
+    it('should complain #createComment() with large densities', async function () {
+      assert.strictEqual(await api.createComment('YesYes9', 'Lorem ipsum dolor sit amet', 'magenta;t'), true)
+      assert.strictEqual(await api.createComment('YesYes9', 'Consectetur adipiscing elit', 'magenta;t'), false)
+      assert.strictEqual(await api.createComment('YesYes9', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', 'magenta;t'), false)
+      assert.strictEqual(await api.createComment('YesYes10', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', 'magenta;t'), true)
+    })
+    it('should accept consecutive #createComment() after 5000 ms', function (done) {
+      this.slow(5300);
+      this.timeout(7000);
+      setTimeout(async () => {
+        assert.strictEqual(await api.createComment('YesYes9', 'Consectetur adipiscing elit', 'magenta;t'), true)
+        assert.strictEqual(await api.createComment('YesYes9', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', 'magenta;t'), false)
+        done()
+      }, 5010)
     })
   })
 })
